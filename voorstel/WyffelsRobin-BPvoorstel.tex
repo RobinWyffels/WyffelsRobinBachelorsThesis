@@ -6,8 +6,8 @@
 
 % Voor een voorstel in het Engels: voeg de documentclass-optie [english] toe.
 % Let op: kan enkel na toestemming van de bachelorproefcoördinator!
-\documentclass[english]{hogent-article}
-
+% \documentclass[english]{hogent-article}
+\documentclass{hogent-article}
 
 % Invoegen bibliografiebestand
 \addbibresource{voorstel.bib}
@@ -24,20 +24,8 @@
 \author{Wyffels Robin}
 \email{wyffels.robin@student.hogent.be}
 
-% TODO: Geef de co-promotor op
-\supervisor[Co-promotor]{S. Beekman (Synalco, \href{mailto:sigrid.beekman@synalco.be}{sigrid.beekman@synalco.be})}
+\supervisor[Co-promotor]{W. Martens (\href{https://www.mrwatts.io/}{Mr. Watts NV}, \href{mailto:wouter.martens@mrwatts.io}{wouter.martens@mrwatts.io})}
 
-% Binnen welke specialisatierichting uit 3TI situeert dit onderzoek zich?
-% Kies uit deze lijst:
-%
-% - Mobile \& Enterprise development
-% - AI \& Data Engineering
-% - Functional \& Business Analysis
-% - System \& Network Administrator
-% - Mainframe Expert
-% - Als het onderzoek niet past binnen een van deze domeinen specifieer je deze
-%   zelf
-%
 \specialisation{Robotics \& Embedded Systems Development}
 \keywords{Robotics, Sim-to-Real, Autonomous Warehouse Robot, Isaac Sim, ROS 2}
 
@@ -49,8 +37,6 @@
 
 \tableofcontents
 
-% De hoofdtekst van het voorstel zit in een apart bestand, zodat het makkelijk
-% kan opgenomen worden in de bijlagen van de bachelorproef zelf.
 \input{voorstel-inhoud}
 
 \printbibliography[heading=bibintoc]

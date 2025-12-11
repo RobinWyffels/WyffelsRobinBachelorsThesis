@@ -1,50 +1,91 @@
-%---------- Inleiding ---------------------------------------------------------
+%---------- Inleiding [engels]---------------------------------------------------------
 
-\section{Introduction}%
-\label{sec:introduction}
+% \section{Introduction}%
+% \label{sec:introduction}
 
-the automatization of warehouses in recent years has started playing an increasingly important role in industries where efficiency, cost saving and safety are central. Autonomous robots were traditionally developed and tested in real life environments, which is time-consuming and expensive. An important question therefore is: How well does a robot trained in a virtual environment fare in the real world. This will be the central focus of this bachelor's thesis.
+% the automatization of warehouses in recent years has started playing an increasingly important role in industries where efficiency, cost saving and safety are central. Autonomous robots were traditionally developed and tested in real life environments, which is time-consuming and expensive. An important question therefore is: How well does a robot trained in a virtual environment fare in the real world. This will be the central focus of this bachelor's thesis.
 
-The case focusses on designing, building and programming an autonomous robot that can mo- ve boxes in a warehouse. The robot will be developed completely from scratch, including: hardware (chassis, propulsion, lifting mechanism) and software (ROS 2 nodes for internal systems communication, external communication and control systems). The innovative concept is the use of NVIDIA Isaac Sim and Isaac Lab to train the models and virtually simulate the robot. This bachelors thesis targets IT-Professionals and industrial automation engineers, as well as specific companies that are interested in optimizing warehouse automation technologies. 
+% The case focusses on designing, building and programming an autonomous robot that can mo- ve boxes in a warehouse. The robot will be developed completely from scratch, including: hardware (chassis, propulsion, lifting mechanism) and software (ROS 2 nodes for internal systems communication, external communication and control systems). The innovative concept is the use of NVIDIA Isaac Sim and Isaac Lab to train the models and virtually simulate the robot. This bachelors thesis targets IT-Professionals and industrial automation engineers, as well as specific companies that are interested in optimizing warehouse automation technologies. 
 
-The problem statement is as follows: 
-How well does an autonomous robot, trained in a virtual environment fare in a real world warehouse environment? 
-The central research question is: 
-How well does the behaviour and performance of a virtually trained autonomous robot translate in a real world warehouse environment?
+% The problem statement is as follows: 
+% How well does an autonomous robot, trained in a virtual environment fare in a real world warehouse environment? 
+% The central research question is: 
+% How well does the behaviour and performance of a virtually trained autonomous robot translate in a real world warehouse environment?
 
-The goal of this research is to realise a proof of concept: 
-A working robot that can autonomously … tasks in a warehouse where the behaviour and performance will be measured against the simulated environment. 
-The end result includes a functional prototype, an analysis of the differences between simulated and real world performance, and the findings of using NVIDIA Isaac Sim and Isaac Lab for virtual training of autonomous industrial robots. 
+% The goal of this research is to realise a proof of concept: 
+% A working robot that can autonomously … tasks in a warehouse where the behaviour and performance will be measured against the simulated environment. 
+% The end result includes a functional prototype, an analysis of the differences between simulated and real world performance, and the findings of using NVIDIA Isaac Sim and Isaac Lab for virtual training of autonomous industrial robots. 
 
+%---------- Inleiding [Nederlands]---------------------------------------------------------
+\section{Introductie}%
+\label{sec:Introductie}
+
+De automatisering van magazijnen heeft de afgelopen jaren een steeds belangrijkere rol gekregen in sectoren waar efficiëntie, kostenbesparing en veiligheid centraal staan. Autonome robots werden traditioneel ontwikkeld en getest in echte omgevingen, wat tijdrovend en duur is. Een belangrijke vraag is daarom: Hoe goed presteert een robot die in een virtuele omgeving is getraind in de echte wereld? Dit zal de centrale focus zijn van deze bachelorproef.
+
+De casus richt zich op het ontwerpen, bouwen en programmeren van een autonome robot die dozen kan verplaatsen in een magazijn. De robot zal volledig vanaf nul worden ontwikkeld, inclusief: hardware (chassis, aandrijving, hefmechanisme) en software (ROS 2-nodes voor interne systeemcommunicatie, externe communicatie en besturingssystemen). Het innovatieve concept is het gebruik van NVIDIA Isaac Sim en Isaac Lab om de modellen te trainen en de robot virtueel te simuleren. Deze bachelorproef richt zich op IT-professionals en ingenieurs in industriële automatisering, evenals specifieke bedrijven die geïnteresseerd zijn in het optimaliseren van magazijnautomatiseringstechnologieën.
+
+De probleemstelling luidt als volgt: Hoe goed presteert een autonome robot, getraind in een virtuele omgeving, in een echte magazijnomgeving?
+
+De centrale onderzoeksvraag is: Hoe vertaalt het gedrag en de prestaties van een virtueel getrainde autonome robot zich naar een echte magazijnomgeving?
+
+Het doel van dit onderzoek is het realiseren van een proof of concept: Een werkende robot die autonoom taken kan uitvoeren in een magazijn, waarbij het gedrag en de prestaties worden vergeleken met de gesimuleerde omgeving.
+
+Het eindresultaat omvat een functioneel prototype, een analyse van de verschillen tussen gesimuleerde en reële prestaties, en de bevindingen van het gebruik van NVIDIA Isaac Sim en Isaac Lab voor virtuele training van autonome industriële robots.
 
 %---------- Stand van zaken ---------------------------------------------------
 
-\section{Literature review}%
-\label{sec:Literature review}
-% TODO add sourses
+\section{State-of-the-art}%
+\label{sec:State-of-the-art}
 
-\subsection{Intro: Warehouse Automation and Autonomous Mobile Robots (AMRs)}
-The automation of warehouses is rapidly growing due to the use of AI-driven systems like AMRs, robotic manipulators, and AGV's (Automated Guided Vehicle). 
-Recent specialized literature highlights that AI techniques, including machine learning, computer vision, and reinforcement learning, enhance the accuracy and cost efficiency of intralogistics. 
-However, implementation complexity and real-world validation remain critical challenges, particularly within dynamic warehouse environments characterized by changing layouts and human interaction. 
-The current findings indicate a simulation-first approach where robot behaviors and policies are first developed and tested in a virtual environment before making their way into physical pilots. 
-AMR-specific warehouse operation reviews reference questions about navigation without fixed infrastructure, safe human-robot interactions, and scalable software-stacks, which further proves the need for research into sim-to-real performance % TODO add citations.
+% \subsection{Intro: Warehouse Automation and Autonomous Mobile Robots (AMRs)}
+% The automation of warehouses is rapidly growing due to the use of AI-driven systems like AMRs, robotic manipulators, and AGV's (Automated Guided Vehicle). 
+% Recent specialized literature highlights that AI techniques, including machine learning, computer vision, and reinforcement learning, enhance the accuracy and cost efficiency of intralogistics. 
+% However, implementation complexity and real-world validation remain critical challenges, particularly within dynamic warehouse environments characterized by changing layouts and human interaction. 
+% The current findings indicate a simulation-first approach where robot behaviors and policies are first developed and tested in a virtual environment before making their way into physical pilots. 
+% AMR-specific warehouse operation reviews reference questions about navigation without fixed infrastructure, safe human-robot interactions, and scalable software-stacks, which further proves the need for research into sim-to-real performance % TODO add citations.
 
-\subsection{Virtual training and simulation first robot development}
-Virtual training in hyper realistic environments are generally seen as a way of increasing safety, accelerating iterations, while decreasing cost. 
-Peer-reviewed research shows that VR/simulation can train robots in complex scenarios, provided that the transfer to the real world is carefully evaluated. 
-The Navigation2 stack (Nav2) In the ROS ecosystem, illustrates that modern navigation architectures (behaviour trees, dynamic planners/controllers) can be deployed in unscripted, busy environments (Marathon2 experiment), but also that tuning and robustness remain important issues. 
-This precisely demonstrates the need for semantically linking simulation experiments to real world measurements.
+\subsection{Introductie: Magazijnautomatisering en Autonome Mobiele Robots (AMR's)}
+De automatisering van magazijnen groeit snel dankzij het gebruik van AI-gestuurde systemen zoals AMR's, robotmanipulatoren en AGV's (Automated Guided Vehicles). 
+Recente gespecialiseerde literatuur benadrukt dat AI-technieken, waaronder machine learning, computervisie en reinforcement learning, de nauwkeurigheid en kostenefficiëntie van intralogistiek verbeteren. 
+Toch blijven implementatiecomplexiteit en validatie in de echte wereld kritieke uitdagingen, vooral binnen dynamische magazijnomgevingen die worden gekenmerkt door veranderende indelingen en menselijke interactie. 
+De huidige bevindingen wijzen op een simulatie-eerst aanpak, waarbij robotgedrag en beleidsregels eerst worden ontwikkeld en getest in een virtuele omgeving voordat ze worden toegepast in fysieke pilots. 
+AMR-specifieke reviews van magazijnoperaties verwijzen naar vragen rond navigatie zonder vaste infrastructuur, veilige interacties tussen mens en robot, en schaalbare softwarestacks, wat de noodzaak van onderzoek naar sim-to-real prestaties verder onderstreept. % TODO voeg citaties toe.
+\autocite{Sodiya2024,Keith2024}
 
-\subsection{NVIDIA Isaac ecosystem: Isaac Sim, Isaac Lab, Isaac Gym}
-Isaac sim (Omniverse) is a physics-based, GPU-accelerated simulation with RTX-sensorrendering, synthetic data (replicator), Ros 2-bridges and workflows for SIL/HIL. This offers the possibility of making a digital twin of warehouse scenes and validating robot stacks for real world tests. 
-Isaac lab offers an open modular framework for robot learning (RL, lfD, motion planning) with domain randomization and large scale efficiency simulations. Relevant in methodically reducing the sim-to-real gap. Historically Isaac Gym marked a breakthrough: a completely GPU-based pipeline that accelerates RL-training by an order of 2-3 times by keeping physics and policy training on the same GPU; this makes large scale parallel training of tasks like locomotion or manipulation possible and ideal for exploring real world deployments.
+% \subsection{Virtual training and simulation first robot development}
+% Virtual training in hyper realistic environments are generally seen as a way of increasing safety, accelerating iterations, while decreasing cost. 
+% Peer-reviewed research shows that VR/simulation can train robots in complex scenarios, provided that the transfer to the real world is carefully evaluated. 
+% The Navigation2 stack (Nav2) In the ROS ecosystem, illustrates that modern navigation architectures (behaviour trees, dynamic planners/controllers) can be deployed in unscripted, busy environments (Marathon2 experiment), but also that tuning and robustness remain important issues. 
+% This precisely demonstrates the need for semantically linking simulation experiments to real world measurements.
+\subsection{Virtuele training en simulation first robotontwikkeling}
+Virtuele training in hyperrealistische omgevingen wordt algemeen gezien als een manier om de veiligheid te vergroten, iteraties te versnellen en kosten te verlagen. 
+Peer-reviewed onderzoek door \textcite{Fareed2024} toont aan dat VR/ simulatie robots kan trainen in complexe scenario’s, mits de overdracht naar de echte wereld zorgvuldig wordt geëvalueerd. 
+De Navigation2-stack (Nav2) binnen het ROS-ecosysteem illustreert dat moderne navigatie-architecturen (gedragsbomen, dynamische planners/controllers) kunnen worden ingezet in ongescripte, drukke omgevingen (Marathon2 experiment) \textcite{Macenski2020}, maar ook dat afstemming en robuustheid belangrijke aandachtspunten blijven. 
+Dit benadrukt precies de noodzaak om simulatie-experimenten semantisch te koppelen aan metingen in de echte wereld.
 
-\subsection{Ros 2 as the backbone of modern autonomous robots}
-ROS 2 forms an industrial middleware with DDS-based communication, lifecycle management, and better safety pillars than ROS 1. The Science Robotics publication describes its design, architecture, and applications “in the wild,” which legitimizes ROS 2 for safety-critical settings such as warehouses. On top of ROS 2, Navigation2 offers a modern navigation stack (behavior trees, planners/controllers) which, in the Marathon 2 experiment, functioned reliably and without failure in crowded campus scenarios over a long period. For an applied-IT case, ROS 2 is therefore a robust foundation for integrating sensors, actuation, planning, and AI policies—and for gradually replacing classic modules with learned components.
+% \subsection{NVIDIA Isaac ecosystem: Isaac Sim, Isaac Lab, Isaac Gym}
+% Isaac sim (Omniverse) is a physics-based, GPU-accelerated simulation with RTX-sensorrendering, synthetic data (replicator), Ros 2-bridges and workflows for SIL/HIL. This offers the possibility of making a digital twin of warehouse scenes and validating robot stacks for real world tests. 
+% Isaac lab offers an open modular framework for robot learning (RL, lfD, motion planning) with domain randomization and large scale efficiency simulations. Relevant in methodically reducing the sim-to-real gap. Historically Isaac Gym marked a breakthrough: a completely GPU-based pipeline that accelerates RL-training by an order of 2-3 times by keeping physics and policy training on the same GPU; this makes large scale parallel training of tasks like locomotion or manipulation possible and ideal for exploring real world deployments.
+\subsection{NVIDIA Isaac-ecosysteem: Isaac Sim, Isaac Lab, Isaac Gym}
+Isaac Sim (Omniverse) is een fysica-gebaseerde, GPU-versnelde simulatie met RTX-sensorrendering, synthetische data (Replicator), ROS 2-bruggen en workflows voor SIL/HIL. Dit biedt de mogelijkheid om een digitale tweeling van magazijnscènes te creëren en robotstacks te valideren voor tests in de echte wereld.  
+Isaac Lab biedt een open modulair framework voor robotleren (RL, LfD, motion planning) met domeinrandomisatie en grootschalige efficiëntiesimulaties. Dit is relevant voor het methodisch verkleinen van de sim-to-real kloof. Historisch gezien betekende Isaac Gym een doorbraak: een volledig GPU-gebaseerde pijplijn die RL-training 2–3 keer versnelt door fysica en policy-training op dezelfde GPU te houden; dit maakt grootschalige parallelle training van taken zoals locomotie of manipulatie mogelijk en ideaal voor het verkennen van toepassingen in de echte wereld.
+\autocite{NVIDIA2025,The_Isaac_Lab_Project_Developers2025,Makoviychuk2021}
 
-\subsection{Warehouse specific insights and research gaps}
-The AMR review for warehouses concludes that time/effort waste is mainly in material transport, which AMRs can reduce by collaborating with humans and taking over repetitive tasks; at the same time, it highlights needs around safety, control software, and navigation in dynamic layouts without infrastructure. Broad reviews of AI warehouse automation emphasize the trend toward edge computing, RL, and computer vision, but warn that validation in the real world remains crucial to support simulation-based claims. This places our case (training virtually, then comparing physically) right at the heart of the current gap: quantitatively measuring how well virtual policies perform on real floors with variable lighting conditions, friction, and sensor noise.
+% \subsection{Ros 2 as the backbone of modern autonomous robots}
+% ROS 2 forms an industrial middleware with DDS-based communication, lifecycle management, and better safety pillars than ROS 1. The Science Robotics publication describes its design, architecture, and applications “in the wild,” which legitimizes ROS 2 for safety-critical settings such as warehouses. On top of ROS 2, Navigation2 offers a modern navigation stack (behavior trees, planners/controllers) which, in the Marathon 2 experiment, functioned reliably and without failure in crowded campus scenarios over a long period. For an applied-IT case, ROS 2 is therefore a robust foundation for integrating sensors, actuation, planning, and AI policies—and for gradually replacing classic modules with learned components.
+\subsection{ROS 2 als ruggengraat van moderne autonome robots}
+ROS 2 vormt een industrieel middleware-platform met DDS-gebaseerde communicatie, lifecycle management en sterkere veiligheidsfundamenten dan ROS 1. 
+De publicatie in \textit{Science Robotics} door \textcite{Macenski2022 } beschrijft het ontwerp, de architectuur en toepassingen “in het wild,” wat ROS 2 legitimeert voor veiligheidkritische omgevingen zoals magazijnen. 
+Bovenop ROS 2 biedt Navigation2 een moderne navigatiestack (gedragsbomen, planners/ controllers) die in het Marathon2-experiment \textcite{Macenski2020} betrouwbaar en zonder falen functioneerde in drukke campusomgevingen gedurende een lange periode. 
+Voor een toegepast-IT-geval is ROS 2 daarom een robuuste basis voor het integreren van sensoren, actuatie, planning en AI-beleidsregels—en voor het geleidelijk vervangen van klassieke modules door geleerde componenten.
+\autocite{OpenNavigation2025}
+
+
+% \subsection{Warehouse specific insights and research gaps}
+% The AMR review for warehouses concludes that time/effort waste is mainly in material transport, which AMRs can reduce by collaborating with humans and taking over repetitive tasks; at the same time, it highlights needs around safety, control software, and navigation in dynamic layouts without infrastructure. Broad reviews of AI warehouse automation emphasize the trend toward edge computing, RL, and computer vision, but warn that validation in the real world remains crucial to support simulation-based claims. This places our case (training virtually, then comparing physically) right at the heart of the current gap: quantitatively measuring how well virtual policies perform on real floors with variable lighting conditions, friction, and sensor noise.
+\subsection{Magazijnspecifieke inzichten en onderzoekshiaten}
+De AMR-review voor magazijnen concludeert dat tijd- en inspanningsverlies voornamelijk optreedt bij materiaaltransport, wat AMR’s kunnen verminderen door samen te werken met mensen en repetitieve taken over te nemen; tegelijkertijd benadrukt het de noodzaak rond veiligheid, besturingssoftware en navigatie in dynamische indelingen zonder infrastructuur. Brede reviews van AI-magazijnautomatisering onderstrepen de trend richting edge computing, reinforcement learning en computervisie, maar waarschuwen dat validatie in de echte wereld cruciaal blijft om simulatie-gebaseerde claims te ondersteunen. Dit plaatst onze casus (virtueel trainen en vervolgens fysiek vergelijken) precies in het centrum van de huidige kloof: het kwantitatief meten van hoe goed virtuele beleidsregels presteren op echte vloeren met variabele lichtomstandigheden, wrijving en sensorgeluid.
+\autocite{Sodiya2024,Keith2024}
 
 % Voor literatuurverwijzingen zijn er twee belangrijke commando's:
 % \autocite{KEY} => (Auteur, jaartal) Gebruik dit als de naam van de auteur
@@ -55,11 +96,130 @@ The AMR review for warehouses concludes that time/effort waste is mainly in mate
 
 
 %---------- Methodologie ------------------------------------------------------
-\section{Methodology}%
-\label{sec:Methodology}
+\section{Methodologie}%
+\label{sec:Methodologie}
 
-something here
+\subsection{Onderzoeksaanpak}
+Het onderzoek volgt een vergelijkende studie gecombineerd met een proof-of-concept. Het doel is om de prestaties van een autonome robot, getraind in een virtuele omgeving, te vergelijken met zijn prestaties in een echte magazijnomgeving. De centrale onderzoeksvraag wordt beantwoord door middel van:
+\begin{itemize}
+    \item \textbf{Simulaties:} Training en validatie van het AI-model in NVIDIA Isaac Sim en Isaac Lab.
+    \item \textbf{Experimenten:} Uitvoeren van fysieke tests met de zelfgebouwde robot in een gecontroleerde magazijnomgeving.
+    \item \textbf{Vergelijkende analyse:} Kwantitatieve vergelijking van route-efficiëntie, taakduur, obstakelvermijding en mapping-nauwkeurigheid tussen simulatie en real-world.
+\end{itemize}
+
+\subsection{Onderzoekstechnieken per deelvraag}
+\begin{itemize}
+    \item \textbf{Mapping-nauwkeurigheid:} Vergelijk virtuele kaart (Isaac) met SLAM-kaart van ROS 2 in de echte omgeving.
+    \item \textbf{Route-efficiëntie:} Meet tijd en afstand voor taken in simulatie en real-world.
+    \item \textbf{Obstacle avoidance:} Tel aantal succesvolle vermijdingen en botsingen in beide omgevingen.
+    \item \textbf{Sim-to-real gap:} Analyseer verschillen in prestaties en identificeer oorzaken (sensorruis, domain gap).
+\end{itemize}
+
+\subsection{Tools en Technologieën}
+\begin{itemize}
+    \item \textbf{Hardware:} Raspberry Pi 5, motor drivers, Lidar/camera, chassis en liftmechanisme.
+    \item \textbf{Software:}
+    \begin{itemize}
+        \item ROS 2 (Humble of Iron) voor robotbesturing en communicatie.
+        \item Isaac Sim \& Isaac Lab voor simulatie en AI-training.
+        \item Nav2 stack als baseline voor navigatie.
+    \end{itemize}
+    \item \textbf{Programmeertalen:} C++ (voor ROS 2 nodes), eventueel Python voor Isaac-integratie.
+    \item \textbf{AI-technieken:} Reinforcement Learning en routeplanning in Isaac Lab.
+    \item \textbf{Bridges:} Isaac ROS voor koppeling tussen simulatie en fysieke robot.
+\end{itemize}
+
+\subsection{Typische bachelorproefvorm}
+Dit project valt onder vergelijkende studie + proof-of-concept:
+\begin{enumerate}
+    \item Ontwikkel een werkende robot (hardware + ROS 2).
+    \item Train AI-model in virtuele omgeving.
+    \item Integreer AI-model op fysieke robot.
+    \item Voer experimenten uit en vergelijk resultaten.
+\end{enumerate}
+
+\subsection{Tijdsplanning en Deliverables}
+\begin{itemize}
+    \item \textbf{Phase 1} (Hardware design) voltooid.
+    \item \textbf{Phase 2} (Hardware integration) bijna voltooid.
+    \item \textbf{Phase 3} (Software integration) 4 weken
+    
+    \textbf{Deliverable:} Werkende robot met teleoperatie en basisnavigatie.
+    \item \textbf{Phase 4} (Simulation \& AI training) 6 weken
+    
+    \textbf{Deliverable:} Getraind AI-model in Isaac Sim.
+    \item \textbf{Phase 5} (Integration) 3 weken
+    
+    \textbf{Deliverable:} AI-model geïntegreerd op robot.
+    \item \textbf{Phase 6} (Validation \& Experiments) 4 weken
+    
+    \textbf{Deliverable:} Vergelijkende analyse + eindrapport.
+\end{itemize}
+
+\subsection{Concrete eindresultaat}
+\begin{itemize}
+    \item Proof-of-concept robot die autonoom taken uitvoert.
+    \item Analyseverslag met meetbare resultaten en conclusies over sim-to-real performance.
+    \item Eventuele aanbevelingen voor bedrijven op basis van bevindingen.
+\end{itemize}
 
 %---------- Verwachte resultaten ----------------------------------------------
-\section{Expected result, conclusion}%
-\label{sec:Expected_result_conclusion}
+\section{Verwachte resultaten en conclusie}%
+\label{sec:Verwachte_resultaten_en_conclusie}
+
+\subsection{Hypothese}
+Ik verwacht dat er een duidelijke performance gap zal zijn tussen de virtueel getrainde robot en de prestaties in de echte wereld. Dit verschil zal voornamelijk veroorzaakt worden door:
+\begin{itemize}
+    \item Sensorruis en onnauwkeurigheid van Lidar in real-world omstandigheden.
+    \item Perfecte simulatiecondities (geen reflecties, geen variabele lichtomstandigheden) versus onvoorspelbare realiteit.
+\end{itemize}
+Obstakelvermijding en routeplanning zullen in de echte omgeving waarschijnlijk meer fouten opleveren door onverwachte obstakels en variabele omgevingsfactoren.
+
+\subsection{Verwachte resultaten}
+
+De resultaten zullen worden weergegeven in vergelijkende grafieken per metric:
+\begin{enumerate}
+    \item \textbf{Taakduur (s)} 
+        \begin{itemize}
+            \item X-as: Testscenario’s (bijv. Bay 1 → Bay 5)
+            \item Y-as: Tijd in seconden
+            \item Vergelijking: Simulatie vs Real-world (bar chart)
+        \end{itemize}
+    \item \textbf{Afgelegde afstand (m)}
+        \begin{itemize}
+            \item X-as: Testscenario's
+            \item Y-as: Afstand in meters
+            \item Vergelijking: Simulatie vs Real-world
+        \end{itemize}
+    \item \textbf{Aantal botsingen}
+        \begin{itemize}
+            \item X-as: Testscenario's
+            \item Y-as: Aantal botsingen
+            \item Vergelijking: Simulatie vs Real-world
+        \end{itemize}
+    \item \textbf{Mapping-nauwkeurigheid}
+        \begin{itemize}
+            \item Vergelijking van een virtuele kaart (Isaac Sim) met een SLAM-kaart van ROS 2 in de echte omgeving.
+            \item Dit kan visueel worden weergegeven als twee grondplannen naast elkaar.
+        \end{itemize}
+\end{enumerate}
+\subsection{Mock-up voorbeeld (fictieve data)}
+\textbf{Simulatie:} Taakduur ± 30s, Afstand ± 10m, Botsingen = 0
+\textbf{Real-world:} Taakduur ± 45s, Afstand ± 12m, Botsingen = 2
+
+\subsection{Verwachte conclusie}
+Virtuele training zal de ontwikkeltijd aanzienlijk verkorten en kosten reduceren, maar de prestaties in de echte wereld zullen beïnvloed worden door:
+\begin{itemize}
+    \item Sensorruis en onnauwkeurigheden.
+    \item Variabelen die moeilijk te simuleren zijn (reflecties, vloerfrictie, lichtcondities).
+\end{itemize}
+
+\textbf{Belangrijk inzicht:} Hoe beter de simulatieomgeving overeenkomt met de sensorcapaciteiten van de echte robot (bv. door domain randomization en realistische sensormodellen), hoe kleiner de sim-to-real gap.
+
+\subsection{Meerwaarde voor de doelgroep}
+Voor IT-professionals in industriële automatisatie biedt dit onderzoek:
+\begin{itemize}
+    \item Praktische richtlijnen voor het inzetten van simulatie-first workflows.
+    \item Inzicht in haalbaarheid en beperkingen van virtuele training voor magazijnrobots.
+    \item Potentiële kostenbesparing door minder fysieke testcycli en snellere iteraties.
+\end{itemize}
