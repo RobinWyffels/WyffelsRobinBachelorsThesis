@@ -50,7 +50,7 @@ Recente gespecialiseerde literatuur benadrukt dat AI-technieken, waaronder machi
 Toch blijven implementatiecomplexiteit en validatie in de echte wereld kritieke uitdagingen, vooral binnen dynamische magazijnomgevingen die worden gekenmerkt door veranderende indelingen en menselijke interactie. 
 De huidige bevindingen wijzen op een simulatie-eerst aanpak, waarbij robotgedrag en beleidsregels eerst worden ontwikkeld en getest in een virtuele omgeving voordat ze worden toegepast in fysieke pilots. 
 AMR-specifieke reviews van magazijnoperaties verwijzen naar vragen rond navigatie zonder vaste infrastructuur, veilige interacties tussen mens en robot, en schaalbare softwarestacks, wat de noodzaak van onderzoek naar sim-to-real prestaties verder onderstreept. % TODO voeg citaties toe.
-\autocite{Sodiya2024,Keith2024}
+\autocite{Sodiya2024, Keith2024}
 
 % \subsection{Virtual training and simulation first robot development}
 % Virtual training in hyper realistic environments are generally seen as a way of increasing safety, accelerating iterations, while decreasing cost. 
@@ -68,14 +68,16 @@ Dit benadrukt precies de noodzaak om simulatie-experimenten semantisch te koppel
 % Isaac lab offers an open modular framework for robot learning (RL, lfD, motion planning) with domain randomization and large scale efficiency simulations. Relevant in methodically reducing the sim-to-real gap. Historically Isaac Gym marked a breakthrough: a completely GPU-based pipeline that accelerates RL-training by an order of 2-3 times by keeping physics and policy training on the same GPU; this makes large scale parallel training of tasks like locomotion or manipulation possible and ideal for exploring real world deployments.
 \subsection{NVIDIA Isaac-ecosysteem: Isaac Sim, Isaac Lab, Isaac Gym}
 Isaac Sim (Omniverse) is een fysica-gebaseerde, GPU-versnelde simulatie met RTX-sensorrendering, synthetische data (Replicator), ROS 2-bruggen en workflows voor SIL/HIL. Dit biedt de mogelijkheid om een digitale tweeling van magazijnscènes te creëren en robotstacks te valideren voor tests in de echte wereld.  
-Isaac Lab biedt een open modulair framework voor robotleren (RL, LfD, motion planning) met domeinrandomisatie en grootschalige efficiëntiesimulaties. Dit is relevant voor het methodisch verkleinen van de sim-to-real kloof. Historisch gezien betekende Isaac Gym een doorbraak: een volledig GPU-gebaseerde pijplijn die RL-training 2–3 keer versnelt door fysica en policy-training op dezelfde GPU te houden; dit maakt grootschalige parallelle training van taken zoals locomotie of manipulatie mogelijk en ideaal voor het verkennen van toepassingen in de echte wereld.
-\autocite{NVIDIA2025,The_Isaac_Lab_Project_Developers2025,Makoviychuk2021}
+Isaac Lab biedt een open modulair framework voor robotleren (RL, LfD, motion planning) met domeinrandomisatie en grootschalige efficiëntiesimulaties. Dit is relevant voor het methodisch verkleinen van de sim-to-real kloof. Historisch gezien betekende Isaac Gym een doorbraak: een volledig GPU-gebaseerde pijplijn die RL-training 2-3 keer versnelt door fysica en policy-training op dezelfde GPU te houden; dit maakt grootschalige parallelle training van taken zoals locomotie of manipulatie mogelijk en ideaal voor het verkennen van toepassingen in de echte wereld.
+\autocite{NVIDIA2025, IsaacLab2025, Makoviychuk2021}
 
 % \subsection{Ros 2 as the backbone of modern autonomous robots}
 % ROS 2 forms an industrial middleware with DDS-based communication, lifecycle management, and better safety pillars than ROS 1. The Science Robotics publication describes its design, architecture, and applications “in the wild,” which legitimizes ROS 2 for safety-critical settings such as warehouses. On top of ROS 2, Navigation2 offers a modern navigation stack (behavior trees, planners/controllers) which, in the Marathon 2 experiment, functioned reliably and without failure in crowded campus scenarios over a long period. For an applied-IT case, ROS 2 is therefore a robust foundation for integrating sensors, actuation, planning, and AI policies—and for gradually replacing classic modules with learned components.
 \subsection{ROS 2 als ruggengraat van moderne autonome robots}
 ROS 2 vormt een industrieel middleware-platform met DDS-gebaseerde communicatie, lifecycle management en sterkere veiligheidsfundamenten dan ROS 1. 
-De publicatie in \textit{Science Robotics} door \textcite{Macenski2022 } beschrijft het ontwerp, de architectuur en toepassingen “in het wild,” wat ROS 2 legitimeert voor veiligheidkritische omgevingen zoals magazijnen. 
+De publicatie in \textit{Science Robotics} door 
+\textcite{Macenski2022}
+beschrijft het ontwerp, de architectuur en toepassingen “in het wild,” wat ROS 2 legitimeert voor veiligheidkritische omgevingen zoals magazijnen. 
 Bovenop ROS 2 biedt Navigation2 een moderne navigatiestack (gedragsbomen, planners/ controllers) die in het Marathon2-experiment \textcite{Macenski2020} betrouwbaar en zonder falen functioneerde in drukke campusomgevingen gedurende een lange periode. 
 Voor een toegepast-IT-geval is ROS 2 daarom een robuuste basis voor het integreren van sensoren, actuatie, planning en AI-beleidsregels—en voor het geleidelijk vervangen van klassieke modules door geleerde componenten.
 \autocite{OpenNavigation2025}

@@ -32,13 +32,18 @@
 \begin{document}
 
 \begin{abstract}
-  Hier schrijf je de samenvatting van je voorstel, als een doorlopende tekst van één paragraaf. Let op: dit is geen inleiding, maar een samenvattende tekst van heel je voorstel met inleiding (voorstelling, kaderen thema), probleemstelling en centrale onderzoeksvraag, onderzoeksdoelstelling (wat zie je als het concrete resultaat van je bachelorproef?), voorgestelde methodologie, verwachte resultaten en meerwaarde van dit onderzoek (wat heeft de doelgroep aan het resultaat?).
+Deze bachelorproef onderzoekt de sim-to-real prestaties van een autonome magazijnrobot die volledig virtueel is getraind met NVIDIA Isaac Sim en ROS 2. Het centrale vraagstuk is hoe goed het gedrag en de prestaties van een robot, ontwikkeld in een digitale omgeving, overeenkomen met zijn functioneren in een echte magazijncontext.
+
+De robot wordt vanaf nul ontworpen en gebouwd, inclusief hardware (chassis, aandrijving, hefmechanisme) en softwaremodules (ROS 2-nodes voor communicatie en besturing). In de simulatieomgeving worden navigatie, mapping en obstakelvermijding getraind en getest, waarna dezelfde taken fysiek worden uitgevoerd in een gecontroleerde magazijnsetting. De prestaties worden kwantitatief vergeleken op metrics zoals taakduur, afgelegde afstand, botsingen en kaartnauwkeurigheid.
+
+Verwacht wordt dat er een duidelijke kloof ontstaat tussen simulatie en realiteit, veroorzaakt door sensorruis, variabele lichtomstandigheden en moeilijk te simuleren factoren zoals vloerfrictie. Toch biedt de simulatie-first aanpak aanzienlijke voordelen: kortere ontwikkeltijd, lagere kosten en snellere iteraties. De meerwaarde voor IT-professionals en bedrijven ligt in praktische richtlijnen voor virtuele training, inzicht in beperkingen van sim-to-real overdracht en aanbevelingen voor het optimaliseren van magazijnautomatisering.
 \end{abstract}
 
 \tableofcontents
 
 \input{voorstel-inhoud}
 
-\printbibliography[heading=bibintoc]
+\nocite{Macenski2022,OpenNavigation2025,NVIDIA2025,IsaacLab2025,Makoviychuk2021}
+\printbibliography[heading=bibintoc,section=0]
 
 \end{document}
