@@ -5,32 +5,40 @@
 \chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
 \label{ch:inleiding}
 
-De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te begrijpen en in te zien waarom de onderzoeksvraag de moeite waard is om te onderzoeken. In de inleiding ga je literatuurverwijzingen beperken, zodat de tekst vlot leesbaar blijft. Je kan de inleiding verder onderverdelen in secties als dit de tekst verduidelijkt. Zaken die aan bod kunnen komen in de inleiding~\autocite{Pollefliet2011}:
+De automatisering van magazijnen evolueert snel door de toenemende inzet van autonome mobiele robots (AMR’s). Bedrijven streven naar efficiëntere logistieke processen, lagere operationele kosten en een hogere veiligheid in omgevingen waar mensen en robots samenwerken. Traditioneel worden autonome robots ontwikkeld en getest in fysieke testopstellingen, wat tijdrovend, duur en beperkt schaalbaar is. De opkomst van krachtige simulatieplatformen zoals NVIDIA Isaac Sim maakt het mogelijk om robotgedrag volledig virtueel te ontwerpen, trainen en valideren voordat een fysiek prototype wordt gebouwd. Deze simulation‑first aanpak biedt duidelijke voordelen, maar roept tegelijk een fundamentele vraag op: in welke mate komt het gedrag van een virtueel getrainde robot overeen met zijn prestaties in de echte wereld?
 
-\begin{itemize}
-  \item context, achtergrond
-  \item afbakenen van het onderwerp
-  \item verantwoording van het onderwerp, methodologie
-  \item probleemstelling
-  \item onderzoeksdoelstelling
-  \item onderzoeksvraag
-  \item \ldots
-\end{itemize}
+Hoewel simulatieomgevingen steeds realistischer worden, blijft de kloof tussen simulatie en realiteit een hardnekkige uitdaging. Sensoren gedragen zich anders in echte magazijnen dan in virtuele omgevingen, onder meer door variabele lichtomstandigheden, reflecties, stof, vloerfrictie en onverwachte obstakels. Ook fysische interacties, zoals slippen van wielen of kleine onnauwkeurigheden in motorrespons, zijn moeilijk perfect te modelleren. Hierdoor bestaat het risico dat een robot die in simulatie uitstekend presteert, in de realiteit minder betrouwbaar of zelfs onveilig blijkt. Deze onzekerheid vormt de kern van dit onderzoek.
+
+Deze bachelorproef richt zich op het ontwerpen, bouwen en evalueren van een autonome magazijnrobot die volledig virtueel wordt getraind met Isaac Sim en ROS 2. De robot wordt vanaf nul ontwikkeld, zowel hardwarematig (chassis, aandrijving, sensoren) als softwarematig (ROS 2‑nodes voor besturing, communicatie en AI‑integratie). De virtueel getrainde modellen worden vervolgens toegepast op de fysieke robot, waarna de prestaties in beide omgevingen kwantitatief worden vergeleken. Door deze vergelijking wordt inzicht verkregen in de betrouwbaarheid van virtuele training en de factoren die de sim‑to‑real prestaties beïnvloeden.
 
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
-Uit je probleemstelling moet duidelijk zijn dat je onderzoek een meerwaarde heeft voor een concrete doelgroep. De doelgroep moet goed gedefinieerd en afgelijnd zijn. Doelgroepen als ``bedrijven,'' ``KMO's'', systeembeheerders, enz.~zijn nog te vaag. Als je een lijstje kan maken van de personen/organisaties die een meerwaarde zullen vinden in deze bachelorproef (dit is eigenlijk je steekproefkader), dan is dat een indicatie dat de doelgroep goed gedefinieerd is. Dit kan een enkel bedrijf zijn of zelfs één persoon (je co-promotor/opdrachtgever).
+De centrale uitdaging binnen dit onderzoek is de onzekerheid rond de betrouwbaarheid van virtuele training voor autonome magazijnrobots. Hoewel simulatie een veilige, snelle en kostenefficiënte ontwikkelomgeving biedt, blijft het onduidelijk in welke mate een in simulatie getraind AI‑model zich correct gedraagt in een echte magazijnsetting. De doelgroep die baat heeft bij dit onderzoek bestaat uit professionals in industriële automatisering, robotontwikkelaars, en bedrijven die magazijnprocessen willen optimaliseren met autonome robots. Voor deze stakeholders is het essentieel om te weten hoe groot de sim‑to‑real kloof is, welke factoren deze kloof veroorzaken en hoe virtuele training kan worden ingezet zonder de betrouwbaarheid van het eindresultaat in gevaar te brengen.
 
 \section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
 \label{sec:onderzoeksvraag}
 
-Wees zo concreet mogelijk bij het formuleren van je onderzoeksvraag. Een onderzoeksvraag is trouwens iets waar nog niemand op dit moment een antwoord heeft (voor zover je kan nagaan). Het opzoeken van bestaande informatie (bv. ``welke tools bestaan er voor deze toepassing?'') is dus geen onderzoeksvraag. Je kan de onderzoeksvraag verder specifiëren in deelvragen. Bv.~als je onderzoek gaat over performantiemetingen, dan 
+De centrale onderzoeksvraag van deze bachelorproef luidt:
+
+Hoe vertaalt het gedrag en de prestatie van een virtueel getrainde autonome magazijnrobot zich naar een echte magazijnomgeving?
+
+Deze vraag wordt verder ondersteund door deelvragen die onder meer betrekking hebben op navigatiebetrouwbaarheid, obstakelvermijding, sensorprestaties, omgevingsinvloeden en de impact van simulatieparameters op de uiteindelijke real‑world prestaties.
 
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
-Wat is het beoogde resultaat van je bachelorproef? Wat zijn de criteria voor succes? Beschrijf die zo concreet mogelijk. Gaat het bv.\ om een proof-of-concept, een prototype, een verslag met aanbevelingen, een vergelijkende studie, enz.
+Het doel van deze bachelorproef is het realiseren van een werkend prototype van een autonome magazijnrobot en het kwantitatief evalueren van de sim‑to‑real prestaties. Concreet omvat dit:
+
+\begin{itemize}
+    \item het bouwen van een fysieke robot met aandrijving, sensoren en ROS 2‑softwarestack;
+    \item het trainen van een AI‑model in Isaac Sim voor navigatie en obstakelvermijding;
+    \item het uitvoeren van identieke taken in simulatie en in een echte magazijnomgeving;
+    \item het analyseren van verschillen in taakduur, afgelegde afstand, botsingen en kaartnauwkeurigheid;
+    \item het formuleren van aanbevelingen voor het optimaliseren van sim‑to‑real overdracht.
+\end{itemize}
+
+Succes wordt bereikt wanneer zowel een functioneel prototype als een onderbouwde vergelijkende analyse worden opgeleverd.
 
 \section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
 \label{sec:opzet-bachelorproef}
@@ -45,6 +53,8 @@ In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand v
 
 In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen.
 
-% TODO: Vul hier aan voor je eigen hoofstukken, één of twee zinnen per hoofdstuk
+In Hoofdstuk~\ref{ch:resultaten} presenteert de resultaten, analyse en vergelijking tussen simulatie en realiteit.
+
+In Hoofdstuk~\ref{ch:discussie} worden de resultaten geïnterpreteerd, de beperkingen van het onderzoek besproken en aanbevelingen geformuleerd voor praktijk en toekomstig onderzoek.
 
 In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij wordt ook een aanzet gegeven voor toekomstig onderzoek binnen dit domein.

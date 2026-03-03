@@ -7,45 +7,68 @@
 
 % Pas na deze inleidende paragraaf komt de eerste sectiehoofding.
 
-Dit hoofdstuk bevat je literatuurstudie. De inhoud gaat verder op de inleiding, maar zal het onderwerp van de bachelorproef *diepgaand* uitspitten. De bedoeling is dat de lezer na lezing van dit hoofdstuk helemaal op de hoogte is van de huidige stand van zaken (state-of-the-art) in het onderzoeksdomein. Iemand die niet vertrouwd is met het onderwerp, weet nu voldoende om de rest van het verhaal te kunnen volgen, zonder dat die er nog andere informatie moet over opzoeken \autocite{Pollefliet2011}.
+% Dit hoofdstuk bevat je literatuurstudie. De inhoud gaat verder op de inleiding, maar zal het onderwerp van de bachelorproef *diepgaand* uitspitten. De bedoeling is dat de lezer na lezing van dit hoofdstuk helemaal op de hoogte is van de huidige stand van zaken (state-of-the-art) in het onderzoeksdomein. Iemand die niet vertrouwd is met het onderwerp, weet nu voldoende om de rest van het verhaal te kunnen volgen, zonder dat die er nog andere informatie moet over opzoeken \autocite{Pollefliet2011}.
 
-Je verwijst bij elke bewering die je doet, vakterm die je introduceert, enz.\ naar je bronnen. In \LaTeX{} kan dat met het commando \texttt{$\backslash${textcite\{\}}} of \texttt{$\backslash${autocite\{\}}}. Als argument van het commando geef je de ``sleutel'' van een ``record'' in een bibliografische databank in het Bib\LaTeX{}-formaat (een tekstbestand). Als je expliciet naar de auteur verwijst in de zin (narratieve referentie), gebruik je \texttt{$\backslash${}textcite\{\}}. Soms is de auteursnaam niet expliciet een onderdeel van de zin, dan gebruik je \texttt{$\backslash${}autocite\{\}} (referentie tussen haakjes). Dit gebruik je bv.~bij een citaat, of om in het bijschrift van een overgenomen afbeelding, broncode, tabel, enz. te verwijzen naar de bron. In de volgende paragraaf een voorbeeld van elk.
+% Je verwijst bij elke bewering die je doet, vakterm die je introduceert, enz.\ naar je bronnen. In \LaTeX{} kan dat met het commando \texttt{$\backslash${textcite\{\}}} of \texttt{$\backslash${autocite\{\}}}. Als argument van het commando geef je de ``sleutel'' van een ``record'' in een bibliografische databank in het Bib\LaTeX{}-formaat (een tekstbestand). Als je expliciet naar de auteur verwijst in de zin (narratieve referentie), gebruik je \texttt{$\backslash${}textcite\{\}}. Soms is de auteursnaam niet expliciet een onderdeel van de zin, dan gebruik je \texttt{$\backslash${}autocite\{\}} (referentie tussen haakjes). Dit gebruik je bv.~bij een citaat, of om in het bijschrift van een overgenomen afbeelding, broncode, tabel, enz. te verwijzen naar de bron. In de volgende paragraaf een voorbeeld van elk.
 
-\textcite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\autocite{Creeger2009}.
+% \textcite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\autocite{Creeger2009}.
 
-Let er ook op: het \texttt{cite}-commando voor de punt, dus binnen de zin. Je verwijst meteen naar een bron in de eerste zin die erop gebaseerd is, dus niet pas op het einde van een paragraaf.
+% Let er ook op: het \texttt{cite}-commando voor de punt, dus binnen de zin. Je verwijst meteen naar een bron in de eerste zin die erop gebaseerd is, dus niet pas op het einde van een paragraaf.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\textwidth]{grail.jpg}
-  \caption[Voorbeeld figuur.]{\label{fig:grail}Voorbeeld van invoegen van een figuur. Zorg altijd voor een uitgebreid bijschrift dat de figuur volledig beschrijft zonder in de tekst te moeten gaan zoeken. Vergeet ook je bronvermelding niet!}
-\end{figure}
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=0.8\textwidth]{grail.jpg}
+%   \caption[Voorbeeld figuur.]{\label{fig:grail}Voorbeeld van invoegen van een figuur. Zorg altijd voor een uitgebreid bijschrift dat de figuur volledig beschrijft zonder in de tekst te moeten gaan zoeken. Vergeet ook je bronvermelding niet!}
+% \end{figure}
 
-\begin{listing}
-  \begin{minted}{python}
-    import pandas as pd
-    import seaborn as sns
+% \begin{listing}
+%   \begin{minted}{python}
+%     import pandas as pd
+%     import seaborn as sns
 
-    penguins = sns.load_dataset('penguins')
-    sns.relplot(data=penguins, x="flipper_length_mm", y="bill_length_mm", hue="species")
-  \end{minted}
-  \caption[Voorbeeld codefragment]{Voorbeeld van het invoegen van een codefragment.}
-\end{listing}
+%     penguins = sns.load_dataset('penguins')
+%     sns.relplot(data=penguins, x="flipper_length_mm", y="bill_length_mm", hue="species")
+%   \end{minted}
+%   \caption[Voorbeeld codefragment]{Voorbeeld van het invoegen van een codefragment.}
+% \end{listing}
 
-\lipsum[7-20]
+% \lipsum[7-20]
 
-\begin{table}
-  \centering
-  \begin{tabular}{lcr}
-    \toprule
-    \textbf{Kolom 1} & \textbf{Kolom 2} & \textbf{Kolom 3} \\
-    $\alpha$         & $\beta$          & $\gamma$         \\
-    \midrule
-    A                & 10.230           & a                \\
-    B                & 45.678           & b                \\
-    C                & 99.987           & c                \\
-    \bottomrule
-  \end{tabular}
-  \caption[Voorbeeld tabel]{\label{tab:example}Voorbeeld van een tabel.}
-\end{table}
+% \begin{table}
+%   \centering
+%   \begin{tabular}{lcr}
+%     \toprule
+%     \textbf{Kolom 1} & \textbf{Kolom 2} & \textbf{Kolom 3} \\
+%     $\alpha$         & $\beta$          & $\gamma$         \\
+%     \midrule
+%     A                & 10.230           & a                \\
+%     B                & 45.678           & b                \\
+%     C                & 99.987           & c                \\
+%     \bottomrule
+%   \end{tabular}
+%   \caption[Voorbeeld tabel]{\label{tab:example}Voorbeeld van een tabel.}
+% \end{table}
 
+De automatisering van magazijnen ontwikkelt zich in hoog tempo door de toenemende inzet van autonome mobiele robots (AMR’s), robotmanipulatoren en Automated Guided Vehicles (AGV’s). Deze systemen worden steeds vaker aangestuurd door AI‑technieken zoals machine learning, computervisie en reinforcement learning, die de nauwkeurigheid en kostenefficiëntie van intralogistieke processen verbeteren \autocite{Sodiya2024}. Ondanks deze vooruitgang blijven implementatiecomplexiteit en validatie in real‑world omstandigheden belangrijke uitdagingen, vooral in dynamische magazijnomgevingen waar indelingen veranderen en menselijke interactie een rol speelt. Recente reviews benadrukken dat een simulatie‑eerst aanpak steeds vaker wordt toegepast: robotgedrag en beleidsregels worden eerst ontwikkeld en getest in virtuele omgevingen voordat fysieke pilots plaatsvinden \autocite{Keith2024}. Deze evolutie onderstreept de noodzaak om sim‑to‑real prestaties systematisch te onderzoeken.
+
+Virtuele training in hyperrealistische simulatieomgevingen wordt algemeen beschouwd als een manier om veiligheid te verhogen, iteraties te versnellen en kosten te verlagen. Onderzoek toont aan dat simulatieomgevingen robots kunnen trainen in complexe scenario’s die in de echte wereld moeilijk of gevaarlijk te reproduceren zijn \textcite{Fareed2024}. Daarnaast wijst recent werk op het belang van domeinrandomisatie—het variëren van licht, texturen, objectposities en fysische parameters—om modellen robuuster te maken voor real‑world variatie. Deze techniek wordt breed toegepast in reinforcement learning en robotica om de kloof tussen simulatie en realiteit te verkleinen. Binnen het ROS‑ecosysteem vormt de Navigation2‑stack (Nav2) een belangrijke referentie voor autonome navigatie. Nav2 maakt gebruik van moderne architecturen zoals gedragsbomen, dynamische planners en controllers, en heeft zijn betrouwbaarheid aangetoond in grootschalige experimenten zoals het Marathon2‑project \textcite{Macenski2020}. Tegelijkertijd blijkt uit deze studies dat afstemming, robuustheid en sensorconfiguratie cruciale factoren blijven voor succesvolle real‑world navigatie. Dit benadrukt de noodzaak om simulatie‑experimenten nauwkeurig te koppelen aan metingen in echte magazijnomgevingen.
+
+Het NVIDIA Isaac‑ecosysteem vormt een krachtige basis voor simulatie‑gebaseerde robotontwikkeling. Isaac Sim biedt een fysica‑gebaseerde, GPU‑versnelde simulatieomgeving met RTX‑sensorrendering, synthetische data‑generatie via Replicator en ingebouwde ROS 2‑bruggen, waardoor digitale tweelingen van magazijnomgevingen kunnen worden opgebouwd \autocite{NVIDIA2025}. Isaac Lab breidt deze mogelijkheden uit met een modulair framework voor reinforcement learning, imitation learning en motion planning, inclusief ondersteuning voor domeinrandomisatie om variaties in licht, texturen, objectposities en fysische parameters te introduceren \autocite{IsaacLab2025}. Historisch gezien vormde Isaac Gym een belangrijke doorbraak: een volledig GPU‑gebaseerde trainingspijplijn die fysica en policy‑training op dezelfde GPU uitvoert, wat grootschalige parallelle training mogelijk maakt en de trainingssnelheid aanzienlijk verhoogt \autocite{Makoviychuk2021}. Deze technologieën maken het mogelijk om complexe navigatie‑ en vermijdingsstrategieën efficiënt te trainen in simulatie.
+
+ROS 2 vormt de softwarematige ruggengraat van moderne autonome robots. Het platform biedt een industrieel middleware‑systeem met DDS‑gebaseerde communicatie, lifecycle‑management en real‑time mogelijkheden. Een publicatie in Science Robotics beschrijft hoe ROS 2 in uiteenlopende real‑world toepassingen wordt ingezet en benadrukt de robuustheid en schaalbaarheid van het platform \textcite{Macenski2022}. Bovenop ROS 2 biedt Navigation2 een moderne navigatiestack die planners, controllers en recovery‑gedragingen combineert. Het Marathon2‑experiment toonde aan dat Nav2 langdurig en betrouwbaar kan functioneren in drukke, dynamische omgevingen \textcite{Macenski2020}. Voor toegepaste IT‑projecten vormt ROS 2 daarom een solide basis voor het integreren van sensoren, actuatoren, planning en AI‑modellen, en maakt het mogelijk om klassieke modules geleidelijk te vervangen door geleerde componenten \autocite{OpenNavigation2025}.
+
+Recente reviews van AMR‑toepassingen in magazijnen tonen aan dat materiaaltransport een van de grootste bronnen van tijdsverlies is, en dat autonome robots dit aanzienlijk kunnen reduceren \autocite{Sodiya2024}. Tegelijkertijd benadrukken deze studies dat veiligheid, navigatiebetrouwbaarheid en software‑architectuur kritieke aandachtspunten blijven, vooral in magazijnen zonder vaste infrastructuur. Brede reviews van AI‑gestuurde magazijnautomatisering wijzen op trends zoals edge computing, reinforcement learning en computervisie, maar waarschuwen dat validatie in de echte wereld essentieel blijft om simulatie‑gebaseerde claims te ondersteunen \autocite{Keith2024}. Daarnaast tonen meerdere onderzoeken aan dat sensoren zoals Lidar en RGB‑camera’s gevoelig zijn voor ruis, reflecties en variabele lichtomstandigheden, wat de prestaties van autonome systemen sterk beïnvloedt. Deze factoren zijn moeilijk volledig te modelleren in simulatie, wat de sim‑to‑real kloof verder vergroot.
+
+Deze inzichten plaatsen het onderwerp van deze bachelorproef precies in het centrum van de huidige onderzoekskloof: het kwantitatief meten van hoe goed virtueel getrainde beleidsregels presteren op echte magazijnvloeren, waar variabele lichtomstandigheden, wrijving, sensorgeluid en onverwachte obstakels een grote rol spelen. Door simulatie‑gebaseerde training te combineren met fysieke experimenten kan worden onderzocht welke factoren de grootste impact hebben op de sim‑to‑real prestaties en hoe deze kloof kan worden verkleind.
+
+
+TODO: extra bronnen correct citeren + citaatcompilatiefouten oplossen.
+% Tobin, J. et al. (2017). Domain Randomization for Transferring Deep Neural Networks from Simulation to the Real World.
+
+% Peng, X. et al. (2018). Sim-to-Real Transfer of Robotic Control with Dynamics Randomization.
+
+% Koenig, N. & Howard, A. (2004). Design and Use Paradigms for Gazebo, an Open-Source Multi-Robot Simulator.
+
+% Tan, J. et al. (2018). Sim-to-Real: Learning Agile Locomotion For Quadruped Robots.
+
+% James, S. et al. (2019). Sim-to-Real via Sim-to-Sim: Data-Efficient Robotic Grasping via Randomized-to-Canonical Adaptation Networks.

@@ -26,5 +26,100 @@
 %% Maak voor elke fase (behalve het literatuuronderzoek) een NIEUW HOOFDSTUK aan
 %% en geef het een gepaste titel.
 
-\lipsum[21-25]
+Dit onderzoek volgt een vergelijkende studie gecombineerd met een proof‑of‑conceptbenadering. Het doel is om de prestaties van een autonome magazijnrobot, getraind in een virtuele omgeving, systematisch te vergelijken met zijn prestaties in een echte magazijnsetting. De methodologie bestaat uit drie grote pijlers: (1) simulatie‑gebaseerde training en validatie, (2) fysieke experimenten met een zelfgebouwde robot, en (3) een kwantitatieve analyse van de sim‑to‑real kloof. Deze aanpak maakt het mogelijk om zowel het gedrag als de onderliggende oorzaken van prestatieverschillen te onderzoeken.
 
+\section{\IfLanguageName{dutch}{Onderzoeksaanpak}{researchstrategie}}%
+\label{sec:Onderzoeksaanpak}
+Het onderzoek start met de ontwikkeling van een autonome magazijnrobot, zowel hardwarematig als softwarematig. De robot wordt uitgerust met een aandrijfsysteem, sensoren (Lidar, camera, IMU), een Jetson‑gebaseerde onboard computer en ROS 2‑softwaremodules voor communicatie en besturing. Parallel wordt een digitale tweeling van de robot opgebouwd in NVIDIA Isaac Sim, inclusief fysische parameters, sensormodellen en een representatieve magazijnomgeving.
+
+In de simulatiefase wordt een AI‑model getraind met behulp van Isaac Sim en Isaac Lab. Hierbij worden navigatie, mapping en obstakelvermijding aangeleerd via reinforcement learning en domeinrandomisatie. De virtuele robot voert vervolgens een reeks vooraf gedefinieerde taken uit, zoals het navigeren tussen magazijnlocaties, het vermijden van obstakels en het volgen van routes.
+
+In de real‑world fase worden dezelfde taken uitgevoerd door de fysieke robot in een gecontroleerde magazijnomgeving. De prestaties worden gemeten met identieke metrics als in de simulatie, zodat een directe vergelijking mogelijk is. De resultaten worden geanalyseerd om de sim‑to‑real kloof te kwantificeren en de oorzaken ervan te identificeren.
+
+\section{\IfLanguageName{dutch}{Onderzoekstechnieken per deelvraag}{research methodologie per question}}%
+\label{sec:Onderzoekstechnieken per deelvraag}
+\subsection{Probleemdomein}
+\label{sec:Probleemdomein}
+De eerste reeks onderzoekstechnieken richt zich op het begrijpen van de factoren die de sim‑to‑real kloof veroorzaken.
+\begin{itemize}
+    \item \textbf{Analyse van sim‑to‑real factoren:} Via een literatuurstudie worden bekende failure cases, sensorbeperkingen en fysische onnauwkeurigheden in simulatie in kaart gebracht. Hierbij wordt specifiek gekeken naar magazijnomgevingen, waar reflecties, variabele lichtcondities en vloerfrictie een grote rol spelen.
+    \item \textbf{Sensorbeperkingen in real‑world omstandigheden:} De prestaties van Lidar en camera’s worden getest in verschillende lichtcondities en onder variabele omgevingsfactoren. Sensorruis wordt gemeten in zowel statische als dynamische situaties. De ruwe sensorstreams uit simulatie en realiteit worden vergeleken om verschillen in resolutie, ruispatronen en detectiebetrouwbaarheid te identificeren.
+    \item \textbf{Complexiteit van magazijnomgevingen:} Echte magazijnlay‑outs worden geobserveerd en gedocumenteerd. Variabiliteit in objectposities, menselijke interactie, reflecties en dynamische obstakels wordt geanalyseerd. Op basis hiervan wordt een “realism checklist” opgesteld die gebruikt wordt om de simulatieomgeving te evalueren.
+    \item \textbf{Uitdagingen in ROS 2 en Nav2:} Tijdens real‑world navigatie worden Nav2‑logs geanalyseerd om problemen in lokalisatie, plannerperformance en recovery‑gedrag te identificeren. Deze resultaten worden vergeleken met de prestaties in simulatie.
+    \item \textbf{Beperkingen van simulatiefysica:} De fysische parameters in Isaac Sim (frictie, inertie, botsingen) worden geëvalueerd en vergeleken met gemeten robotdynamica. Domeinrandomisatie wordt toegepast om te onderzoeken in welke mate variatie in simulatie de real‑world prestaties verbetert.
+\end{itemize}
+
+\subsection{Oplossingsdomein}
+\label{sec:Oplossingsdomein}
+De tweede reeks onderzoekstechnieken richt zich op het evalueren van de prestaties van de robot in simulatie en realiteit.
+
+\begin{itemize}
+    \item \textbf{Mapping‑nauwkeurigheid:} De virtuele kaart uit Isaac Sim wordt vergeleken met een SLAM‑kaart die door de fysieke robot wordt opgebouwd. Verschillen in schaal, vorm, objectdetectie en ruis worden geanalyseerd. 
+    \item \textbf{Route‑efficiëntie:} Voor elke taak worden tijd en afgelegde afstand gemeten in zowel simulatie als realiteit. Deze metrics worden gebruikt om de efficiëntie van navigatie te vergelijken.
+    \item \textbf{Obstacle avoidance:} Het aantal succesvolle vermijdingen en botsingen wordt geregistreerd. Hierbij wordt gekeken naar reactietijd, detectiebetrouwbaarheid en afwijkingen in padplanning.
+    \item \textbf{Sim‑to‑real gap analyse} De verschillen tussen simulatie en realiteit worden geanalyseerd op basis van sensorruis, fysische afwijkingen, omgevingsvariatie en modelgeneraliseerbaarheid.
+    \item \textbf{Modelbijsturing:} Op basis van real‑world feedback wordt onderzocht hoe aanpassingen aan het AI‑model (bijvoorbeeld extra training, domain randomization of finetuning) de prestaties beïnvloeden.
+\end{itemize}
+
+\section{\IfLanguageName{dutch}{Tools en technologieën}{tools and technologies}}%
+\label{sec:Tools en technologieën}
+Het onderzoek maakt gebruik van een combinatie van hardware‑ en softwaretechnologieën:
+\begin{itemize}
+    \item \textbf{Hardware:} Een zelfgebouwde autonome robot met een Raspberry pi‑gebaseerde computer, Lidar, RGB‑camera’s, sterioscopische camera’s en IMU. De robot is ontworpen voor indoor navigatie in magazijnomgevingen.
+    \item \textbf{Software:} ROS 2 vormt de softwarematige ruggengraat voor communicatie, besturing en integratie van AI‑modellen.Isaac Sim, Isaac Lab, Nav2, micro‑ROS voor subsystemen, en C++/Python voor node‑ontwikkeling.
+    \item \textbf{AI‑technieken:} Reinforcement learning, routeplanning, domeinrandomisatie en TensorRT‑gebaseerde inferentie.
+    \item \textbf{Bridges:} ROS bridge voor koppeling tussen simulatie en fysieke robot.
+\end{itemize}
+\section{\IfLanguageName{dutch}{Onderzoeksdesign}{research design}}%
+\label{sec:Onderzoeksdesign}
+Het onderzoeksdesign volgt een iteratieve cyclus:
+\begin{numerate}
+    \item \textbf{Fase 1: Ontwikkeling van de robot:} Mechanische constructie, elektronica‑integratie en ROS 2‑softwarestack.
+    \item \textbf{Fase 2: Simulatie‑training:} Opbouw van de digital twin, training van het AI‑model en validatie in Isaac Sim.
+    \item \textbf{Fase 3: Integratie op de fysieke robot:} Overdracht van het getrainde model naar de Jetson Nano, implementatie van een inferentienode en integratie met motorcontrollers.
+    \item \textbf{Fase 4: Experimenten:} Uitvoeren van identieke taken in simulatie en realiteit.
+    \item \textbf{Fase 5: Analyse:} Vergelijking van prestaties, identificatie van afwijkingen en evaluatie van de sim‑to‑real kloof.
+\end{numerate}
+
+\section{\IfLanguageName{dutch}{Dataverzameling en analysemethoden}{data collection and analysis methods}}%
+\label{sec:Dataverzameling en analysemethoden}
+De dataverzameling omvat:
+
+begin{itemize}
+    \item sensorlogs (Lidar, camera, IMU),
+    \item ROS 2‑logs (Nav2, SLAM, AI‑inference),
+    \item trajectdata (poses, snelheden, afgelegde afstand),
+    \item SLAM‑kaarten,
+    \item taakduur en botsingen.
+end{itemize}
+
+De analyse gebeurt via:
+begin{itemize}
+    \item statistische vergelijking van metrics,
+    \item trajectanalyse (bijv. afwijkingen tussen geplande en uitgevoerde paden),
+    \item visuele vergelijking van kaarten,
+    \item foutclassificatie (sensorfouten, fysische afwijkingen, modelgeneraliseerbaarheid).
+end{itemize}
+
+
+\section{\IfLanguageName{dutch}{Validatie en betrouwbaarheid}{validation and reliability}}%
+\label{sec:Validatie en betrouwbaarheid}
+Om de validiteit van de resultaten te waarborgen, worden de volgende maatregelen genomen:
+\begin{itemize}
+    \item meerdere runs per scenario uitgevoerd,
+    \item variabele omgevingscondities getest (licht, obstakels),
+    \item simulatieparameters systematisch gevarieerd (domain randomization),
+    \item hardwarecomponenten gekalibreerd (sensoren, motoren),
+    \item resultaten onafhankelijk geverifieerd via ROS‑bagfiles.
+end{itemize}
+
+\section{\IfLanguageName{dutch}{Beperkingen van het onderzoek}{limitations of the research}}%
+\label{sec:Beperkingen van het onderzoek}
+Het onderzoek wordt beïnvloed door:
+\begin{itemize}
+    \item beperkte schaal van experimenten (aantal runs, variatie in taken),
+    \item hardwarebeperkingen van de robot (sensorspecificaties, rekenkracht, batterijduur, motorprestaties),
+    \item onnauwkeurigheden in simulatie (fysische parameters, sensor‑modellen),
+    \item onvoorspelbare omgevingsfactoren in real‑world tests,
+    \item tijdsbeperkingen voor iteratieve modelaanpassingen.
+end{itemize}
