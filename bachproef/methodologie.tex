@@ -73,33 +73,33 @@ Het onderzoek maakt gebruik van een combinatie van hardware‑ en softwaretechno
 \section{\IfLanguageName{dutch}{Onderzoeksdesign}{research design}}%
 \label{sec:Onderzoeksdesign}
 Het onderzoeksdesign volgt een iteratieve cyclus:
-\begin{numerate}
+\begin{enumerate}
     \item \textbf{Fase 1: Ontwikkeling van de robot:} Mechanische constructie, elektronica‑integratie en ROS 2‑softwarestack.
     \item \textbf{Fase 2: Simulatie‑training:} Opbouw van de digital twin, training van het AI‑model en validatie in Isaac Sim.
     \item \textbf{Fase 3: Integratie op de fysieke robot:} Overdracht van het getrainde model naar de Jetson Nano, implementatie van een inferentienode en integratie met motorcontrollers.
     \item \textbf{Fase 4: Experimenten:} Uitvoeren van identieke taken in simulatie en realiteit.
     \item \textbf{Fase 5: Analyse:} Vergelijking van prestaties, identificatie van afwijkingen en evaluatie van de sim‑to‑real kloof.
-\end{numerate}
+\end{enumerate}
 
 \section{\IfLanguageName{dutch}{Dataverzameling en analysemethoden}{data collection and analysis methods}}%
 \label{sec:Dataverzameling en analysemethoden}
 De dataverzameling omvat:
 
-begin{itemize}
+\begin{itemize}
     \item sensorlogs (Lidar, camera, IMU),
     \item ROS 2‑logs (Nav2, SLAM, AI‑inference),
     \item trajectdata (poses, snelheden, afgelegde afstand),
     \item SLAM‑kaarten,
     \item taakduur en botsingen.
-end{itemize}
+\end{itemize}
 
 De analyse gebeurt via:
-begin{itemize}
+\begin{itemize}
     \item statistische vergelijking van metrics,
     \item trajectanalyse (bijv. afwijkingen tussen geplande en uitgevoerde paden),
     \item visuele vergelijking van kaarten,
     \item foutclassificatie (sensorfouten, fysische afwijkingen, modelgeneraliseerbaarheid).
-end{itemize}
+\end{itemize}
 
 
 \section{\IfLanguageName{dutch}{Validatie en betrouwbaarheid}{validation and reliability}}%
@@ -111,7 +111,7 @@ Om de validiteit van de resultaten te waarborgen, worden de volgende maatregelen
     \item simulatieparameters systematisch gevarieerd (domain randomization),
     \item hardwarecomponenten gekalibreerd (sensoren, motoren),
     \item resultaten onafhankelijk geverifieerd via ROS‑bagfiles.
-end{itemize}
+\end{itemize}
 
 \section{\IfLanguageName{dutch}{Beperkingen van het onderzoek}{limitations of the research}}%
 \label{sec:Beperkingen van het onderzoek}
@@ -122,4 +122,4 @@ Het onderzoek wordt beïnvloed door:
     \item onnauwkeurigheden in simulatie (fysische parameters, sensor‑modellen),
     \item onvoorspelbare omgevingsfactoren in real‑world tests,
     \item tijdsbeperkingen voor iteratieve modelaanpassingen.
-end{itemize}
+\end{itemize}

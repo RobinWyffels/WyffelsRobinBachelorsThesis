@@ -5,40 +5,43 @@
 \chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
 \label{ch:inleiding}
 
-De automatisering van magazijnen evolueert snel door de toenemende inzet van autonome mobiele robots (AMR’s). Bedrijven streven naar efficiëntere logistieke processen, lagere operationele kosten en een hogere veiligheid in omgevingen waar mensen en robots samenwerken. Traditioneel worden autonome robots ontwikkeld en getest in fysieke testopstellingen, wat tijdrovend, duur en beperkt schaalbaar is. De opkomst van krachtige simulatieplatformen zoals NVIDIA Isaac Sim maakt het mogelijk om robotgedrag volledig virtueel te ontwerpen, trainen en valideren voordat een fysiek prototype wordt gebouwd. Deze simulation‑first aanpak biedt duidelijke voordelen, maar roept tegelijk een fundamentele vraag op: in welke mate komt het gedrag van een virtueel getrainde robot overeen met zijn prestaties in de echte wereld?
+In de hedendaagse logistiek is de opkomst van autonome mobiele robots (AMR's) niet meer weg te denken. Voor de ontwikkeling van deze robots wordt steeds vaker gebruikgemaakt van \textit{digital twins} in simulatieplatformen zoals NVIDIA Isaac Sim. Dit stelt ontwikkelaars in staat om algoritmen te testen in een veilige, virtuele omgeving voordat ze op dure hardware worden ingezet. Echter, de overgang van de virtuele naar de fysieke wereld — de \textit{sim-to-real gap} — blijft een kritiek punt. Waar onderzoek zich vaak richt op visuele of fysische verschillen (zoals lichtinval of frictie), blijkt de technische softwarematige integratie tussen de simulator en de robotica-middleware (ROS 2) een fundamentelere barrière te vormen.
 
-Hoewel simulatieomgevingen steeds realistischer worden, blijft de kloof tussen simulatie en realiteit een hardnekkige uitdaging. Sensoren gedragen zich anders in echte magazijnen dan in virtuele omgevingen, onder meer door variabele lichtomstandigheden, reflecties, stof, vloerfrictie en onverwachte obstakels. Ook fysische interacties, zoals slippen van wielen of kleine onnauwkeurigheden in motorrespons, zijn moeilijk perfect te modelleren. Hierdoor bestaat het risico dat een robot die in simulatie uitstekend presteert, in de realiteit minder betrouwbaar of zelfs onveilig blijkt. Deze onzekerheid vormt de kern van dit onderzoek.
-
-Deze bachelorproef richt zich op het ontwerpen, bouwen en evalueren van een autonome magazijnrobot die volledig virtueel wordt getraind met Isaac Sim en ROS 2. De robot wordt vanaf nul ontwikkeld, zowel hardwarematig (chassis, aandrijving, sensoren) als softwarematig (ROS 2‑nodes voor besturing, communicatie en AI‑integratie). De virtueel getrainde modellen worden vervolgens toegepast op de fysieke robot, waarna de prestaties in beide omgevingen kwantitatief worden vergeleken. Door deze vergelijking wordt inzicht verkregen in de betrouwbaarheid van virtuele training en de factoren die de sim‑to‑real prestaties beïnvloeden.
+Dit onderzoek richt zich op de integratie van NVIDIA Isaac Sim met de ROS 2 Nav2-stack voor een autonome magazijnrobot. Gedurende het traject verschoof de focus van een functionele prestatievergelijking naar een diepgaande analyse van de technische barrières die optreden bij het synchroniseren van coördinatenstelsels tussen deze platformen.
 
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
-De centrale uitdaging binnen dit onderzoek is de onzekerheid rond de betrouwbaarheid van virtuele training voor autonome magazijnrobots. Hoewel simulatie een veilige, snelle en kostenefficiënte ontwikkelomgeving biedt, blijft het onduidelijk in welke mate een in simulatie getraind AI‑model zich correct gedraagt in een echte magazijnsetting. De doelgroep die baat heeft bij dit onderzoek bestaat uit professionals in industriële automatisering, robotontwikkelaars, en bedrijven die magazijnprocessen willen optimaliseren met autonome robots. Voor deze stakeholders is het essentieel om te weten hoe groot de sim‑to‑real kloof is, welke factoren deze kloof veroorzaken en hoe virtuele training kan worden ingezet zonder de betrouwbaarheid van het eindresultaat in gevaar te brengen.
+De overgang van een virtueel model naar een fysiek werkende robot wordt gehinderd door fundamentele verschillen in hoe simulators en robotica-frameworks data interpreteren. Tijdens de uitvoering van dit onderzoek bleek dat de virtuele robot, ondanks een visueel correcte opzet van de digitale tweeling, niet in staat was om via de SLAM Toolbox een ruimte in kaart te brengen. Dit resulteerde in een zogenaamd "rubberbanding"-effect, waarbij de robot herhaaldelijk naar de startpositie teleporteerde zodra sensordata werd verwerkt. De hoofdoorzaak van deze problematiek ligt in een mismatch tussen het coördinatenstelsel van Isaac Sim (Omniverse) en de gestandaardiseerde referentiestelsels van ROS 2 (REP-103 en REP-105).
+
+De doelgroep voor dit onderzoek bestaat uit R\&D-ingenieurs en robotica-ontwikkelaars werkzaam in de logistieke automatisering die overwegen NVIDIA Isaac Sim te implementeren in hun ontwikkelcyclus. Specifiek biedt dit werk cruciale inzichten voor ontwikkelaars die gebruikmaken van de \texttt{isaac\_ros\_bridge} en tegen integratieproblemen aanlopen bij de configuratie van transformatiebomen ($TF$-trees).
 
 \section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
 \label{sec:onderzoeksvraag}
 
-De centrale onderzoeksvraag van deze bachelorproef luidt:
+De centrale onderzoeksvraag van deze bachelorproef is als volgt geformuleerd:
 
-Hoe vertaalt het gedrag en de prestatie van een virtueel getrainde autonome magazijnrobot zich naar een echte magazijnomgeving?
+\begin{quote}
+    \textit{In welke mate vormen de technische discrepanties in coördinatenstelsels tussen NVIDIA Isaac Sim en ROS 2 een barrière voor de realisatie van een functionele digital twin voor autonome navigatie?}
+\end{quote}
 
-Deze vraag wordt verder ondersteund door deelvragen die onder meer betrekking hebben op navigatiebetrouwbaarheid, obstakelvermijding, sensorprestaties, omgevingsinvloeden en de impact van simulatieparameters op de uiteindelijke real‑world prestaties.
+Om deze hoofdvraag te beantwoorden, worden de volgende deelvragen behandeld:
+\begin{itemize}
+    \item Wat zijn de theoretische vereisten voor een stabiele sim-to-real transitie bij AMR's in een magazijncontext?
+    \item Welke invloed hebben afwijkingen in coördinatentransformaties ($TF$-frames) op de nauwkeurigheid van SLAM-algoritmen in een gesimuleerde omgeving?
+    \item Waarom slaagt de Isaac ROS Bridge er in de huidige configuratie niet in om de odometrie-data consistent te synchroniseren met de ROS 2 Nav2-stack?
+\end{itemize}
 
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
-Het doel van deze bachelorproef is het realiseren van een werkend prototype van een autonome magazijnrobot en het kwantitatief evalueren van de sim‑to‑real prestaties. Concreet omvat dit:
+Het beoogde resultaat van deze bachelorproef is tweeledig:
+\begin{enumerate}
+    \item \textbf{Een fysiek prototype:} De realisatie van een autonome robot die in de fysieke wereld succesvol kan navigeren en mappen met ROS 2.
+    \item \textbf{Een technisch analyserapport:} Een gedetailleerde documentatie van de geconstateerde integratiefouten in de virtuele omgeving.
+\end{enumerate}
 
-\begin{itemize}
-    \item het bouwen van een fysieke robot met aandrijving, sensoren en ROS 2‑softwarestack;
-    \item het trainen van een AI‑model in Isaac Sim voor navigatie en obstakelvermijding;
-    \item het uitvoeren van identieke taken in simulatie en in een echte magazijnomgeving;
-    \item het analyseren van verschillen in taakduur, afgelegde afstand, botsingen en kaartnauwkeurigheid;
-    \item het formuleren van aanbevelingen voor het optimaliseren van sim‑to‑real overdracht.
-\end{itemize}
-
-Succes wordt bereikt wanneer zowel een functioneel prototype als een onderbouwde vergelijkende analyse worden opgeleverd.
+Het succes van deze proef wordt niet uitsluitend afgemeten aan een perfect werkende simulatie, maar aan de identificatie van de root-cause van de systeemfout. Het doel is om door middel van een foutenanalyse concrete aanbevelingen te formuleren voor de robotica-community om de softwarematige kloof tussen Omniverse-simulaties en ROS 2 te overbruggen.
 
 \section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
 \label{sec:opzet-bachelorproef}
@@ -49,12 +52,10 @@ Succes wordt bereikt wanneer zowel een functioneel prototype als een onderbouwde
 
 De rest van deze bachelorproef is als volgt opgebouwd:
 
-In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand van zaken binnen het onderzoeksdomein, op basis van een literatuurstudie.
+In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand van zaken binnen het onderzoeksdomein, waarbij dieper wordt ingegaan op AMR-technologieën en de ROS 2-standaarden REP-103 en REP-105.
 
-In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen.
+In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht. Hierin wordt de opbouw van zowel de fysieke robot als de digitale tweeling besproken, inclusief de gebruikte diagnostische technieken voor de $TF$-tree analyse.
 
-In Hoofdstuk~\ref{ch:resultaten} presenteert de resultaten, analyse en vergelijking tussen simulatie en realiteit.
+In Hoofdstuk~\ref{ch:resultaten} (Resultaten en Discussie) worden de bevindingen van de fysieke testen gepresenteerd en wordt een diepgaande analyse gegeven van het falen van de SLAM-fase in de simulator.
 
-In Hoofdstuk~\ref{ch:discussie} worden de resultaten geïnterpreteerd, de beperkingen van het onderzoek besproken en aanbevelingen geformuleerd voor praktijk en toekomstig onderzoek.
-
-In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij wordt ook een aanzet gegeven voor toekomstig onderzoek binnen dit domein.
+In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij worden ook aanbevelingen gedaan voor toekomstige integraties tussen NVIDIA Isaac Sim en ROS 2.
