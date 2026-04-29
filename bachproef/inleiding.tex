@@ -5,14 +5,14 @@
 \chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
 \label{ch:inleiding}
 
-In de hedendaagse logistiek is de opkomst van autonome mobiele robots (AMR's) niet meer weg te denken. Voor de ontwikkeling van deze robots wordt steeds vaker gebruikgemaakt van \textit{digital twins} in simulatieplatformen zoals NVIDIA Isaac Sim. Dit stelt ontwikkelaars in staat om algoritmen te testen in een veilige, virtuele omgeving voordat ze op dure hardware worden ingezet. Echter, de overgang van de virtuele naar de fysieke wereld — de \textit{sim-to-real gap} — blijft een kritiek punt. Waar onderzoek zich vaak richt op visuele of fysische verschillen (zoals lichtinval of frictie), blijkt de technische softwarematige integratie tussen de simulator en de robotica-middleware (ROS 2) een fundamentelere barrière te vormen.
+In de hedendaagse logistiek is de opkomst van autonome mobiele robots (AMR's) niet meer weg te denken. Voor de ontwikkeling van deze robots wordt steeds vaker gebruikgemaakt van \textit{digital twins} in simulatieplatformen zoals NVIDIA Isaac Sim. Dit stelt ontwikkelaars in staat om algoritmen te testen in een veilige, virtuele omgeving voordat ze op dure hardware worden ingezet. Echter, de overgang van de virtuele naar de fysieke wereld — de \textit{sim-to-real gap} — blijft een kritiek punt. Waar onderzoek zich vaak richt op visuele of fysische verschillen (zoals lichtinval of frictie), blijkt de technische softwarematige integratie tussen de simulator en de robotica-middleware (ROS 2) een fundamentelere barrière te vormen, waarbij de identificatie van correcte configuratieparameters essentieel is voor een werkende oplossing.
 
-Dit onderzoek richt zich op de integratie van NVIDIA Isaac Sim met de ROS 2 Nav2-stack voor een autonome magazijnrobot. Gedurende het traject verschoof de focus van een functionele prestatievergelijking naar een diepgaande analyse van de technische barrières die optreden bij het synchroniseren van coördinatenstelsels tussen deze platformen.
+Dit onderzoek richt zich op de integratie van NVIDIA Isaac Sim met de ROS 2 Nav2-stack voor een autonome magazijnrobot. Gedurende het traject verschoof de focus van een functionele prestatievergelijking naar een diepgaande analyse van de technische barrières die optreden bij het synchroniseren van coördinatenstelsels en dataoverdracht tussen deze platformen.
 
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
-De overgang van een virtueel model naar een fysiek werkende robot wordt gehinderd door fundamentele verschillen in hoe simulators en robotica-frameworks data interpreteren. Tijdens de uitvoering van dit onderzoek bleek dat de virtuele robot, ondanks een visueel correcte opzet van de digitale tweeling, niet in staat was om via de SLAM Toolbox een ruimte in kaart te brengen. Dit resulteerde in een zogenaamd "rubberbanding"-effect, waarbij de robot herhaaldelijk naar de startpositie teleporteerde zodra sensordata werd verwerkt. De hoofdoorzaak van deze problematiek ligt in een mismatch tussen het coördinatenstelsel van Isaac Sim (Omniverse) en de gestandaardiseerde referentiestelsels van ROS 2 (REP-103 en REP-105).
+De overgang van een virtueel model naar een fysiek werkende robot wordt gehinderd door fundamentele verschillen in hoe simulators en robotica-frameworks data interpreteren. Tijdens de uitvoering van dit onderzoek bleek dat de virtuele robot, ondanks een visueel correcte opzet van de digitale tweeling, niet in staat was om via de SLAM Toolbox een ruimte in kaart te brengen. Dit resulteerde in een zogenaamd "rubberbanding"-effect, waarbij de robot herhaaldelijk naar de startpositie teleporteerde zodra sensordata werd verwerkt. De hoofdoorzaak van deze problematiek ligt in een mismatch tussen het coördinatenstelsel van Isaac Sim (Omniverse) en de gestandaardiseerde referentiestelsels van ROS 2 (REP-103 en REP-105). Het ontbreken van gestandaardiseerde richtlijnen om deze discrepanties op te lossen, vormt een directe belemmering voor de effectieve inzet van digital twins in de industrie.
 
 De doelgroep voor dit onderzoek bestaat uit R\&D-ingenieurs en robotica-ontwikkelaars werkzaam in de logistieke automatisering die overwegen NVIDIA Isaac Sim te implementeren in hun ontwikkelcyclus. Specifiek biedt dit werk cruciale inzichten voor ontwikkelaars die gebruikmaken van de \texttt{isaac\_ros\_bridge} en tegen integratieproblemen aanlopen bij de configuratie van transformatiebomen ($TF$-trees).
 
@@ -25,20 +25,37 @@ De centrale onderzoeksvraag van deze bachelorproef is als volgt geformuleerd:
     \textit{In welke mate vormen de technische discrepanties in coördinatenstelsels tussen NVIDIA Isaac Sim en ROS 2 een barrière voor de realisatie van een functionele digital twin voor autonome navigatie?}
 \end{quote}
 
-Om deze hoofdvraag te beantwoorden, worden de volgende deelvragen behandeld:
+Om deze hoofdvraag systematisch te beantwoorden, is het onderzoek onderverdeeld in drie domeinen:
+
+\subsection*{1. Probleemdomein: De technische integratiebarrière}
 \begin{itemize}
-    \item Wat zijn de theoretische vereisten voor een stabiele sim-to-real transitie bij AMR's in een magazijncontext?
-    \item Welke invloed hebben afwijkingen in coördinatentransformaties ($TF$-frames) op de nauwkeurigheid van SLAM-algoritmen in een gesimuleerde omgeving?
-    \item Waarom slaagt de Isaac ROS Bridge er in de huidige configuratie niet in om de odometrie-data consistent te synchroniseren met de ROS 2 Nav2-stack?
+    \item \textbf{DV1:} Hoe verhoudt de USD-geometrie van NVIDIA Isaac Sim zich tot de REP 103-standaard van ROS 2 en welke invloed heeft dit op de visuele oriëntatie van de robot?
+    \item \textbf{DV2:} Welke impact hebben temporele inconsistenties en latency tussen de simulator en de fysieke rekenkracht (Raspberry Pi) op de stabiliteit van de transformatieboom ($TF$-tree)?
+    \item \textbf{DV3:} In welke mate beïnvloeden Quality of Service (QoS) instellingen de betrouwbaarheid van de gesimuleerde sensordata over de Isaac ROS Bridge?
+\end{itemize}
+
+\subsection*{2. Analysedomein: De Sim-to-Real discrepantie}
+\begin{itemize}
+    \item \textbf{DV4:} Waarom functioneert de SLAM-navigatiestack accuraat op de fysieke hardware, maar faalt deze in een virtuele omgeving met een identieke softwareconfiguratie?
+    \item \textbf{DV5:} Wat zijn de specifieke parameters in het URDF-exportproces vanuit Onshape die bijdragen aan foutieve transformaties in de digitale tweeling?
+    \item \textbf{DV6:} Welke diagnostische methoden binnen het ROS-ecosysteem zijn het meest effectief voor het isoleren van integratiefouten in een gesimuleerde omgeving?
+\end{itemize}
+
+\subsection*{3. Oplossingsdomein: Strategieën voor Systeemoptimalisatie}
+\begin{itemize}
+    \item \textbf{DV7:} Welke configuratieaanpassingen in de URDF-parameterisatie zijn noodzakelijk om een wiskundige match te garanderen tussen de USD-omgeving en ROS 2?
+    \item \textbf{DV8:} Hoe kan een robuust synchronisatieschema tussen de simulator-clock en de ROS-time worden opgezet om het rubberbanding-effect te elimineren?
+    \item \textbf{DV9:} Welke best-practices kunnen worden geformuleerd voor een betrouwbare Sim-to-Real transitie bij het gebruik van de Isaac ROS Bridge?
 \end{itemize}
 
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
-Het beoogde resultaat van deze bachelorproef is tweeledig:
+Het beoogde resultaat van deze bachelorproef is drieledig:
 \begin{enumerate}
     \item \textbf{Een fysiek prototype:} De realisatie van een autonome robot die in de fysieke wereld succesvol kan navigeren en mappen met ROS 2.
-    \item \textbf{Een technisch analyserapport:} Een gedetailleerde documentatie van de geconstateerde integratiefouten in de virtuele omgeving.
+    \item \textbf{Een technisch analyserapport:} Een gedetailleerde documentatie van de geconstateerde integratiefouten en hun oorzaken in de virtuele omgeving.
+    \item \textbf{Een oplossingsgericht advies:} Een set aanbevelingen en configuratierichtlijnen die dienen als oplossing voor de geïdentificeerde barrières in de simulatie-pijplijn.
 \end{enumerate}
 
 Het succes van deze proef wordt niet uitsluitend afgemeten aan een perfect werkende simulatie, maar aan de identificatie van de root-cause van de systeemfout. Het doel is om door middel van een foutenanalyse concrete aanbevelingen te formuleren voor de robotica-community om de softwarematige kloof tussen Omniverse-simulaties en ROS 2 te overbruggen.
