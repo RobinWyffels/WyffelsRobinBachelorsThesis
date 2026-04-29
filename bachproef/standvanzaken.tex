@@ -49,20 +49,134 @@
 %   \caption[Voorbeeld tabel]{\label{tab:example}Voorbeeld van een tabel.}
 % \end{table}
 
+\section{Evolutie van Magazijnautomatisering}
 De automatisering van magazijnen ontwikkelt zich in hoog tempo door de toenemende inzet van autonome mobiele robots (AMR’s), robotmanipulatoren en Automated Guided Vehicles (AGV’s). Deze systemen worden steeds vaker aangestuurd door AI‑technieken zoals machine learning, computervisie en reinforcement learning, die de nauwkeurigheid en kostenefficiëntie van intralogistieke processen verbeteren \autocite{Sodiya2024}. Ondanks deze vooruitgang blijven implementatiecomplexiteit en validatie in real‑world omstandigheden belangrijke uitdagingen, vooral in dynamische magazijnomgevingen waar indelingen veranderen en menselijke interactie een rol speelt. Recente reviews benadrukken dat een simulatie‑eerst aanpak steeds vaker wordt toegepast: robotgedrag en beleidsregels worden eerst ontwikkeld en getest in virtuele omgevingen voordat fysieke pilots plaatsvinden \autocite{Keith2024}. Deze evolutie onderstreept de noodzaak om sim‑to‑real prestaties systematisch te onderzoeken.
 
+\section{Virtuele Training en Navigatie}
 Virtuele training in hyperrealistische simulatieomgevingen wordt algemeen beschouwd als een manier om veiligheid te verhogen, iteraties te versnellen en kosten te verlagen. Onderzoek toont aan dat simulatieomgevingen robots kunnen trainen in complexe scenario’s die in de echte wereld moeilijk of gevaarlijk te reproduceren zijn \textcite{Fareed2024}. Daarnaast wijst recent werk op het belang van domeinrandomisatie—het variëren van licht, texturen, objectposities en fysische parameters—om modellen robuuster te maken voor real‑world variatie. Deze techniek wordt breed toegepast in reinforcement learning en robotica om de kloof tussen simulatie en realiteit te verkleinen. Binnen het ROS‑ecosysteem vormt de Navigation2‑stack (Nav2) een belangrijke referentie voor autonome navigatie. Nav2 maakt gebruik van moderne architecturen zoals gedragsbomen, dynamische planners en controllers, en heeft zijn betrouwbaarheid aangetoond in grootschalige experimenten zoals het Marathon2‑project \textcite{Macenski2020}. Tegelijkertijd blijkt uit deze studies dat afstemming, robuustheid en sensorconfiguratie cruciale factoren blijven voor succesvolle real‑world navigatie. Dit benadrukt de noodzaak om simulatie‑experimenten nauwkeurig te koppelen aan metingen in echte magazijnomgevingen.
 
+\section{Het NVIDIA Isaac-ecosysteem}
 Het NVIDIA Isaac‑ecosysteem vormt een krachtige basis voor simulatie‑gebaseerde robotontwikkeling. Isaac Sim biedt een fysica‑gebaseerde, GPU‑versnelde simulatieomgeving met RTX‑sensorrendering, synthetische data‑generatie via Replicator en ingebouwde ROS 2‑bruggen, waardoor digitale tweelingen van magazijnomgevingen kunnen worden opgebouwd \autocite{NVIDIA2025}. Isaac Lab breidt deze mogelijkheden uit met een modulair framework voor reinforcement learning, imitation learning en motion planning, inclusief ondersteuning voor domeinrandomisatie om variaties in licht, texturen, objectposities en fysische parameters te introduceren \autocite{IsaacLab2025}. Historisch gezien vormde Isaac Gym een belangrijke doorbraak: een volledig GPU‑gebaseerde trainingspijplijn die fysica en policy‑training op dezelfde GPU uitvoert, wat grootschalige parallelle training mogelijk maakt en de trainingssnelheid aanzienlijk verhoogt \autocite{Makoviychuk2021}. Deze technologieën maken het mogelijk om complexe navigatie‑ en vermijdingsstrategieën efficiënt te trainen in simulatie.
 
+\section{ROS 2 als Middleware}
 ROS 2 vormt de softwarematige ruggengraat van moderne autonome robots. Het platform biedt een industrieel middleware‑systeem met DDS‑gebaseerde communicatie, lifecycle‑management en real‑time mogelijkheden. Een publicatie in Science Robotics beschrijft hoe ROS 2 in uiteenlopende real‑world toepassingen wordt ingezet en benadrukt de robuustheid en schaalbaarheid van het platform \textcite{Macenski2022}. Bovenop ROS 2 biedt Navigation2 een moderne navigatiestack die planners, controllers en recovery‑gedragingen combineert. Het Marathon2‑experiment toonde aan dat Nav2 langdurig en betrouwbaar kan functioneren in drukke, dynamische omgevingen \textcite{Macenski2020}. Voor toegepaste IT‑projecten vormt ROS 2 daarom een solide basis voor het integreren van sensoren, actuatoren, planning en AI‑modellen, en maakt het mogelijk om klassieke modules geleidelijk te vervangen door geleerde componenten \autocite{OpenNavigation2025}.
 
-Recente reviews van AMR‑toepassingen in magazijnen tonen aan dat materiaaltransport een van de grootste bronnen van tijdsverlies is, en dat autonome robots dit aanzienlijk kunnen reduceren \autocite{Sodiya2024}. Tegelijkertijd benadrukken deze studies dat veiligheid, navigatiebetrouwbaarheid en software‑architectuur kritieke aandachtspunten blijven, vooral in magazijnen zonder vaste infrastructuur. Brede reviews van AI‑gestuurde magazijnautomatisering wijzen op trends zoals edge computing, reinforcement learning en computervisie, maar waarschuwen dat validatie in de echte wereld essentieel blijft om simulatie‑gebaseerde claims te ondersteunen \autocite{Keith2024}. Daarnaast tonen meerdere onderzoeken aan dat sensoren zoals Lidar en RGB‑camera’s gevoelig zijn voor ruis, reflecties en variabele lichtomstandigheden, wat de prestaties van autonome systemen sterk beïnvloedt. Deze factoren zijn moeilijk volledig te modelleren in simulatie, wat de sim‑to‑real kloof verder vergroot.
+\section{Robotmodellering: Het Unified Robot Description Format (URDF)}
+\label{sec:urdf_modellering}
 
-Deze inzichten plaatsen het onderwerp van deze bachelorproef precies in het centrum van de huidige onderzoekskloof: het kwantitatief meten van hoe goed virtueel getrainde beleidsregels presteren op echte magazijnvloeren, waar variabele lichtomstandigheden, wrijving, sensorgeluid en onverwachte obstakels een grote rol spelen. Door simulatie‑gebaseerde training te combineren met fysieke experimenten kan worden onderzocht welke factoren de grootste impact hebben op de sim‑to‑real prestaties en hoe deze kloof kan worden verkleind.
+Om een robot succesvol te laten opereren binnen het ROS 2-ecosysteem, is een gestandaardiseerde, wiskundige beschrijving van zijn fysieke structuur onontbeerlijk. Deze beschrijving wordt vastgelegd in het \textit{Unified Robot Description Format} (URDF). Een URDF-bestand is een XML-gebaseerde specificatie die fungeert als de centrale blauwdruk van de robot, waarin zowel de visuele representatie als de kinematische eigenschappen worden gedefinieerd \autocite{ROSCommunity2023}.
 
+\subsection{Componenten van een URDF-model}
+Een URDF-model is opgebouwd uit een boomstructuur van twee fundamentele elementen: \textit{links} en \textit{joints} \autocite{Joseph2018}.
 
-TODO: extra bronnen correct citeren + citaatcompilatiefouten oplossen.
+\begin{itemize}
+\item \textbf{Links:} Dit zijn de rigide onderdelen van de robot, zoals het chassis, de wielen of sensorbehuizingen. Per link worden drie cruciale eigenschappen gedefinieerd: de \textit{visual} (hoe het onderdeel eruitziet in een GUI), de \textit{collision} (de geometrische vorm die wordt gebruikt voor botsingsdetectie in simulatoren) en de \textit{inertial} (de massa en traagheidsmomenten). Vooral de \textit{inertial}-tags zijn van vitaal belang voor physics engines zoals die in NVIDIA Isaac Sim om realistische bewegingen te berekenen \autocite{Joseph2018}.
+\item \textbf{Joints:} Dit zijn de verbindingen tussen de links. De \textit{joint} definieert de kinematische relatie tussen een ouder-link (\textit{parent}) en een kind-link (\textit{child}). Hierbij wordt vastgelegd of een verbinding vast is (\textit{fixed}), kan draaien (\textit{revolute} of \textit{continuous}) of kan schuiven (\textit{prismatic}).
+\end{itemize}
+
+\section{De rol van de $TF$-tree in Navigatie}
+\label{sec:tf_tree_navigatie}
+De URDF vormt de directe basis voor de transformatie-tree, in ROS-terminologie bekend als de $TF$-tree. In een complex systeem zoals een autonome magazijnrobot moeten posities continu worden omgerekend tussen verschillende referentiestelsels. Volgens \textcite{Quigley2015} stelt de $TF$-bibliotheek de robot in staat om op elk gewenst tijdstip de relatieve positie en oriëntatie tussen twee willekeurige onderdelen op te vragen.
+
+\subsection{Dynamische Berekening via de \texttt{robot\_state\_publisher}}
+Dit proces wordt gefaciliteerd door de \texttt{robot\_state\_publisher} node. Deze node combineert de statische informatie uit de URDF met de actuele status van de gewrichten (\texttt{joint\_states}), zoals de rotatiehoek van de wielen. De resulterende $TF$-tree is essentieel voor sensordata-fusie: sensordata van een LiDAR moet vanuit het lokale frame van de sensor (\texttt{sensor\_frame}) getransformeerd worden naar het centrale referentiepunt van de robot (\texttt{base\_link}), en vervolgens naar de wereldkaart (\texttt{map}) om navigatie mogelijk te maken \autocite{Quigley2015}.
+In de context van ROS 2 vormt odometrie de basis van de transformatieketen tussen het lokale frame (\texttt{odom}) en de robot (\texttt{base\_link}).
+\subsection{De URDF als "Single Source of Truth" in Sim-to-Real}
+In een \textit{sim-to-real} context dient de URDF als de \textit{single source of truth} die de brug slaat tussen de virtuele en fysieke wereld. Echter, de stabiliteit van de navigatiestack is extreem gevoelig voor hoe dit bestand wordt geïnterpreteerd door externe software.
+
+Wanneer een simulator zoals NVIDIA Isaac Sim de URDF importeert, moet de interne transformatie-logica naadloos aansluiten op de ROS 2-conventies. Discrepanties in de interpretatie van de assen—waarbij bijvoorbeeld de voorwaartse richting in de simulator niet overeenkomt met de +X-as van ROS 2—leiden tot inconsistente transformatieberekeningen. In dit onderzoek manifesteerde deze instabiliteit zich als het "rubberbanding"-effect: een situatie waarin de navigatiestack tegenstrijdige informatie ontvangt over de positie van de robot ten opzichte van zijn odometrie, waardoor de robot voortdurend naar een eerdere positie lijkt te verspringen. Dit onderstreept dat een correcte URDF-configuratie niet alleen over visuele gelijkenis gaat, maar over de wiskundige integriteit van de gehele software-architectuur.
+
+\section{CAD-integratie en URDF-generatie: Onshape en onshape-to-robot}
+\label{sec:onshape_to_robot}
+
+In de moderne robotica-ontwikkeling begint de creatie van een robot vrijwel altijd in een \textit{Computer-Aided Design} (CAD) omgeving. Voor dit onderzoek is gebruikgemaakt van Onshape, een cloud-native CAD-platform. Hoewel CAD-software essentieel is voor het mechanisch ontwerp, is de resulterende geometrie niet direct bruikbaar voor ROS 2 of fysica-simulatoren zonder een vertaalslag naar een kinematisch formaat zoals URDF.
+
+\subsection{Het ontwerpproces in Onshape}
+Onshape onderscheidt zich van traditionele CAD-pakketten door zijn architectuur waarbij revisiebeheer en samenwerking centraal staan. Tijdens het ontwerpproces van de robot worden onderdelen gegroepeerd in \textit{assemblies}. In deze omgeving worden niet alleen de visuele vormen vastgelegd, maar ook de mechanische relaties tussen onderdelen via zogenaamde \textit{mates} (bijvoorbeeld een \textit{revolute mate} voor een wielas).
+
+Hoewel deze \textit{mates} functioneel vergelijkbaar zijn met de \textit{joints} in een URDF, is de onderliggende datastructuur van een CAD-model veel complexer en bevat deze vaak details die irrelevant zijn voor een simulatie. Een directe export is daarom vaak problematisch, omdat handmatige conversie naar XML foutgevoelig is en de consistentie tussen het mechanisch ontwerp en het simulatiemodel moeilijk te waarborgen blijft.
+
+\subsection{Geautomatiseerde conversie via onshape-to-robot}
+Om de brug te slaan tussen het fysieke ontwerp en de softwarematige representatie, is gebruikgemaakt van de tool \textit{onshape-to-robot} \autocite{Rhoban2025}. Deze tool automatiseert het proces van het extraheren van relevante robotinformatie uit de Onshape-API en het genereren van een valide URDF-pakket.
+
+Volgens de documentatie van \textcite{Rhoban2025} voert de tool drie essentiële taken uit:
+\begin{enumerate}
+\item \textbf{Kinematische extractie:} De \textit{mates} in Onshape worden vertaald naar de corresponderende \textit{joints} (fixed, revolute, etc.) in de URDF, waarbij de juiste transformatie-matrices ($TF$) tussen de links worden berekend.
+\item \textbf{Fysische eigenschappen:} De tool berekent automatisch de massa, het zwaartepunt en de traagheidsmatrices (\textit{inertial properties}) voor elke link op basis van de in Onshape toegewezen materialen en volumes. Dit is cruciaal voor een realistische simulatie in Isaac Sim.
+\item \textbf{Mesh optimalisatie:} De complexe CAD-geometrie wordt geëxporteerd naar STL- of OBJ-bestanden. Hierbij wordt vaak onderscheid gemaakt tussen een gedetailleerde \textit{visual mesh} voor de rendering en een vereenvoudigde \textit{collision mesh} om de rekenlast in de physics engine te beperken.
+\end{enumerate}
+
+\subsection{Relevantie voor de Sim-to-Real consistentie}
+Het gebruik van een geautomatiseerde pijplijn van CAD naar URDF is van fundamenteel belang voor het minimaliseren van de \textit{sim-to-real gap}. Door \textit{onshape-to-robot} te gebruiken, wordt de URDF de 'digitale afgeleide' van het werkelijke mechanische ontwerp. Eventuele aanpassingen in het fysieke ontwerp (zoals het verplaatsen van een sensor) worden via deze weg consistent doorgevoerd in zowel de simulatie-omgeving als de configuratie van de fysieke robot.
+
+Toch blijft de interpretatie van de assen tijdens deze export een kritiek punt. Zoals later zal worden besproken in de context van USD en ROS-standaarden, kan een verkeerde configuratie in de export-instellingen van de tool resulteren in een verschuiving van de voorwaartse as, wat direct bijdraagt aan de problemen met de transformatie-tree in Isaac Sim.
+
+\section{Simultaneous Localization and Mapping (SLAM) en Odometrie}
+\label{sec:slam_odometrie}
+
+Voor de autonome navigatie van een mobiele robot is het essentieel dat het systeem twee vragen gelijktijdig beantwoordt: "Waar ben ik?" en "Hoe ziet de omgeving eruit?". Dit proces staat bekend als \textit{Simultaneous Localization and Mapping} (SLAM). In gesimuleerde omgevingen zoals NVIDIA Isaac Sim lijkt dit proces triviaal vanwege de aanwezigheid van "perfecte" data, maar de integratie met ROS 2-stacks legt de nadruk op de kwetsbaarheid van deze algoritmen voor onnauwkeurige input.
+
+\subsection{De rol van Odometrie in SLAM}
+Odometrie is het gebruik van sensordata om de verandering in positie over tijd te schatten. Traditioneel gebeurt dit via \textit{wheel odometry}, waarbij de omwentelingen van de wielen worden gemeten. In de context van ROS 2 vormt odometrie de basis van de transformatieketen tussen het lokale frame (\texttt{odom}) en de robot (\texttt{base\_link}).
+
+Volgens \textcite{Macenski2021} is de \textit{SLAM Toolbox} momenteel de standaard voor 2D SLAM in dynamische omgevingen binnen ROS 2. Het algoritme maakt gebruik van een \textit{pose graph optimization} techniek. Hierbij dient odometrie als een "eerste gok" voor de verplaatsing van de robot. De SLAM-stack gebruikt vervolgens sensordata (zoals LiDAR) om deze gok te corrigeren door de huidige waarnemingen te matchen met de bestaande kaart (\textit{scan matching}). Wanneer de odometrie echter onbetrouwbaar is of plotselinge sprongen vertoont, kan het algoritme de \textit{loop closure} niet correct berekenen, wat resulteert in een vervormde kaart of het falen van de lokalisatie \autocite{Macenski2021}.
+
+\subsection{Visual-Inertial Odometry (VIO) en de ZED-M}
+Om de beperkingen van wiel-odometrie (zoals slip op gladde magazijnvloeren) te overwinnen, wordt vaak gebruikgemaakt van \textit{Visual-Inertial Odometry} (VIO). In dit onderzoek wordt hiervoor de ZED-M camera ingezet. VIO combineert visuele data van stereocamera's met bewegingsdata van een \textit{Inertial Measurement Unit} (IMU).
+
+De ZED-M camera gebruikt \textit{feature tracking} om de beweging van de robot te bepalen aan de hand van visuele herkenningspunten in de omgeving \autocite{Stereolabs2023}. Volgens \textcite{ONL2026} biedt het integreren van VIO een significante meerwaarde voor de Nav2-stack, omdat het een tweede, onafhankelijke bron van odometrie levert die minder gevoelig is voor mechanische afwijkingen. Echter, in een simulatie moet de VIO-data gesynthetiseerd worden. Als de simulatiebridge de visuele frames en de IMU-data niet exact synchroon aanlevert, ontstaat er een temporele drift die de lokalisatie instabiel maakt.
+
+\subsection{Problematiek in gesimuleerde omgevingen}
+In gesimuleerde omgevingen is de theoretische nauwkeurigheid van odometrie vaak hoger dan in de realiteit, maar de softwarematige verwerking binnen ROS 2 introduceert nieuwe uitdagingen. Wanneer de transformatie tussen \texttt{map} en \texttt{odom} niet consistent wordt gepubliceerd door de SLAM-stack—vaak door een vertraging in de dataoverdracht vanuit de simulator—treedt het "rubberbanding"-effect op. Dit onderstreept dat voor een succesvolle SLAM-operatie in simulatie niet de visuele getrouwheid, maar de consistentie van de transformatie-tree en de timing van de VIO-pakketten de doorslaggevende factor is.
+
+\section{Coördinatiestelsels en Standaarden: Van USD naar ROS 2}
+\label{sec:standaarden_coordinaten}
+
+De basis van moderne simulatieomgevingen zoals NVIDIA Isaac Sim ligt bij \textit{Universal Scene Description} (USD). USD is een opensource-standaard die oorspronkelijk is ontwikkeld door Pixar Animation Studios voor het beheer van complexe 3D-scènes in animatiefilms \autocite{Studios2021}. Hoewel USD initieel werd ontworpen voor de entertainmentindustrie, is het door de robuuste architectuur en uitwisselbaarheid uitgegroeid tot de standaard voor \textit{digital twins} en industriële simulaties binnen het NVIDIA Omniverse-ecosysteem
+De basis van moderne simulatieomgevingen zoals NVIDIA Isaac Sim ligt bij \textit{Universal Scene Description} (USD). USD is een opensource-standaard die oorspronkelijk is ontwikkeld door Pixar Animation Studios voor het beheer van complexe 3D-scènes in animatiefilms \autocite{Studios2021}. Hoewel USD initieel werd ontworpen voor de entertainmentindustrie, is het door de robuuste architectuur en uitwisselbaarheid uitgegroeid tot de standaard voor \textit{digital twins} en industriële simulaties binnen het NVIDIA Omniverse-ecosysteem. Een cruciaal aspect bij het integreren van simulatoren met robotica-frameworks is de definitie van de ruimtelijke geometrie. Volgens het \textit{UsdGeom}-schema positioneert USD objecten in een rechtshandig coördinatensysteem \autocite{Studios2026}. Hierbij is het essentieel om een onderscheid te maken tussen de wiskundige \textit{handedness} van een systeem en de semantische naamgeving van de assen.
+
+\subsection{Handedness en Wiskundige Consistentie}
+De \textit{handedness} van een assenstelsel bepaalt hoe de X-, Y- en Z-assen zich tot elkaar verhouden via het kruisproduct. In een rechtshandig systeem geldt de mathematische regel $X \times Y = Z$. Uit de documentatie en standaarden blijkt dat zowel ROS 2 \autocite{Foote2010}, USD \autocite{Studios2026} als platformen zoals Isaac Sim, Omniverse en Blender dit rechtshandige principe hanteren. Mathematisch gezien zijn deze systemen dus op één lijn; de verwarring ontstaat pas bij de toewijzing van de rijrichting en de hoogte-as.
+
+\subsection{Semantische Assenmismatch tussen ROS 2 en Isaac Sim}
+Het fundamentele probleem bij de \textit{sim-to-real} transitie ligt in de semantische interpretatie van de assen. Binnen de robotica hanteert ROS 2 de REP 103-standaard voor mobiele robots \autocite{Foote2010}. Hierbij is de conventie strikt gedefinieerd als:
+\begin{itemize}
+\item \textbf{+X}: Voorwaartse rijrichting (\textit{forward})
+\item \textbf{+Y}: Linkerzijde (\textit{left})
+\item \textbf{+Z}: Omhoog (\textit{up})
+\end{itemize}
+
+Hoewel Isaac Sim binnen de USD-omgeving standaard een "Y-up" conventie kan hanteren (waarbij +Y omhoog is en -Z voorwaarts), wordt voor robotica-toepassingen vaak de "Z-up" modus gebruikt om dichter bij de robotica-standaarden te blijven. Echter, zelfs in de Z-up modus van Omniverse verschilt de conventie van die van ROS 2. In Isaac Sim (Z-up) geldt vaak de volgende indeling:
+\begin{itemize}
+\item \textbf{+Z}: Omhoog (\textit{up})
+\item \textbf{+Y}: Voorwaarts (\textit{forward})
+\item \textbf{+X}: Rechts (\textit{right})
+\end{itemize}
+Dit betekent dat, hoewel beide systemen rechtshandig zijn, de visuele voorwaartse richting van de robot in Isaac Sim (+Y) haaks staat op de voorwaartse richting die ROS 2 verwacht (+X). Deze discrepantie is dikwijls de bron van foutieve transformaties bij het importeren van URDF-bestanden of het configureren van de \textit{articulation root}.
+
+\subsection{Impact op Navigatie en Transformaties}
+De noodzaak voor een correcte afstemming van deze assen wordt beschreven in REP 105, die de hiërarchie van coördinatenframes voor mobiele platformen definieert \autocite{Meeussen2010}. Navigatiestacks zoals Nav2 vertrouwen op de transformatieketen tussen de wereldkaart (\textit{map}), de lokale odometrie (\textit{odom}) en de robotbasis (\texttt{base\_link}). Wanneer de simulator data publiceert waarbij de rijrichting semantisch verschilt van de verwachting van de SLAM-algoritmen, ontstaat er een conflict in de transformatieboom ($TF$-tree). Dit verklaart fenomenen waarbij sensordata en bewegingsdata inconsistent worden verwerkt, wat essentieel is voor het begrijpen van integratiefouten in de digitale tweeling.
+
+\section{De Sim-to-Real Gap: Van Fysieke naar Softwarematige Discrepanties}
+\label{sec:sim_to_real_gap}
+Een van de meest kritieke uitdagingen bij de ontwikkeling van autonome robots in virtuele omgevingen is de \textit{sim-to-real gap}. Dit fenomeen beschrijft de discrepantie tussen de prestaties van een algoritme in een simulator en de prestaties op de fysieke hardware. Hoewel deze kloof vaak wordt geassocieerd met visuele verschillen of onnauwkeurige fysische modellering van frictie en lichtinval, toont recent onderzoek aan dat de oorzaak dieper ligt in de technische integratie tussen de simulator en de robotica-middleware.
+
+\subsection{Systeemidentificatie en Fysische Modellering}
+Een fundamentele methode om de \textit{sim-to-real gap} te verkleinen is \textit{System Identification} (SysID). \textcite{Tan2018} benadrukken dat het exact gelijkstellen van fysieke parameters — zoals massa, traagheid, frictie en motorkoppel — tussen de simulator en de echte wereld essentieel is voor een succesvolle transitie. Wanneer de "interne wereld" van de simulator, inclusief de onderliggende coördinatenstelsels en mechanische limieten, niet nauwkeurig matcht met de werkelijkheid, zal een robot die in simulatie optimaal presteert, falen zodra hij op fysieke hardware wordt ingezet \autocite{Tan2018}.
+
+\subsection{De Software-to-Software Gap: Latency en Timing}
+Naast de fysieke eigenschappen vormt de temporele synchronisatie een grote barrière. \textcite{Hoefer2021} categoriseren de uitdagingen van \textit{Sim2Real} in verschillende domeinen en wijzen daarbij op de impact van softwarematige en algoritmische hiaten. Een cruciaal aspect hierbij is de communicatievertraging of \textit{latency}.
+
+\textcite{Peng2020} tonen aan dat het modelleren van de vertraging tussen de simulator en de robot-controller van vitaal belang is voor stabiel gedrag. In een ROS 2-gebaseerd systeem, zoals de integratie tussen NVIDIA Isaac Sim en de Nav2-stack, kan een gebrek aan klok-synchronisatie leiden tot instabiliteit. Als de simulator sensordata publiceert met een tijdstempel die niet exact overeenkomt met de interne klok van de navigatiestack, ontstaan er sprongen in de transformatieboom ($TF$-tree). Dit kan leiden tot het "rubberbanding"-effect, waarbij de robot door de middleware herhaaldelijk naar een eerdere logische positie wordt geteleporteerd omdat de binnenkomende data als temporeel inconsistent wordt beschouwd \autocite{Peng2020}.
+
+\subsection{Data-integriteit en Quality of Service (QoS)}
+De betrouwbaarheid van de verbinding tussen de simulator en ROS 2 — de zogenaamde \textit{bridge} — is afhankelijk van de configuratie van de communicatielagen. Binnen ROS 2 spelen \textit{Quality of Service} (QoS) instellingen een cruciale rol in het beheren van dataverlies en netwerkvertraging \autocite{Robotics2026}. Onjuiste QoS-instellingen in de bridge tussen Isaac Sim en ROS kunnen leiden tot het wegvallen van odometrie-pakketten of vertragingen in de publicatie van $TF$-frames. Dit zorgt voor een gefragmenteerde datastroom, wat de SLAM-algoritmen en navigatie-stacks verhindert om een consistente kaart van de omgeving op te bouwen. De \textit{software-to-software gap} is hiermee niet enkel een kwestie van rekenkracht, maar van de precisie waarmee tijd en data tussen gescheiden systemen worden gesynchroniseerd.
+
+\section{Conclusie: De Onderzoekskloof}
+Recente reviews tonen aan dat materiaaltransport een van de grootste bronnen van tijdsverlies is en dat AMR's dit aanzienlijk kunnen reduceren \autocite{Sodiya2024}. Echter, de beloofde efficiëntiewinst van deze systemen valt of staat bij een naadloze overgang van simulatie naar realiteit. Hoewel de literatuur vaak focust op het trainen van complexe AI-modellen, blijft de fundamentele technische integratie tussen hyperrealistische simulatoren zoals NVIDIA Isaac Sim en industriële frameworks zoals ROS 2 onderbelicht \autocite{Keith2024}.
+
+Deze inzichten plaatsen deze bachelorproef in het centrum van de huidige onderzoekskloof: het identificeren van de technische barrières die een stabiele digitale tweeling in de weg staan. In plaats van enkel te focussen op de prestaties van navigatie-algoritmen, richt dit onderzoek zich op de dieperliggende oorzaken van de \textit{sim-to-real gap}, zoals coördinatiemismatches en temporele inconsistenties. Door de integratieproblemen die optreden bij het koppelen van Isaac Sim aan ROS 2 kwantitatief en technisch te analyseren, wordt duidelijk waarom theoretisch werkende modellen in de praktijk falen nog voordat de fysieke testfase is bereikt.
+
 % Tobin, J. et al. (2017). Domain Randomization for Transferring Deep Neural Networks from Simulation to the Real World.
 
 % Peng, X. et al. (2018). Sim-to-Real Transfer of Robotic Control with Dynamics Randomization.
