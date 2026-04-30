@@ -1,2 +1,174 @@
 \chapter{\IfLanguageName{dutch}{Realisatie van de Fysieke en Virtuele Robot}{Realization of the Physical and Virtual Robot}}%
 \label{ch:realisatie}
+
+\section{CAD-ontwerp en URDF-export}
+In dit hoofdstuk wordt de transitie van het conceptuele ontwerp naar een functionele robot beschreven. Dit proces omvat zowel de fysieke assemblage als de creatie van de digitale tweeling via een gestructureerde exportpijplijn.
+
+\subsection{Mechanisch Ontwerp en CAD-modellering}
+De fysieke constructie van de robot is ontworpen met een focus op modulariteit en structurele integriteit. De basis van het chassis bestaat uit een stalen plaat die fungeert als centraal draagelement. Deze plaat voorziet in de nodige stijfheid en dient als montagepunt voor diverse 3D-geprinte componenten, waarbij gebruik is gemaakt van \textit{threaded inserts} voor duurzame verbindingen.
+
+De robot is geconfigureerd als een onderduw-AMR, uitgerust met een intern liftmechanisme. Dit mechanisme wordt aangedreven door twee stappenmotoren die, via een verankerde nylon band, twee liftplatformen verticaal verplaatsen. Voor de tractie is gekozen voor een vierwielig Mecanum-principe. Deze configuratie maakt holonome locomotie mogelijk, waarbij de robot in alle richtingen van het tweedimensionale vlak kan bewegen zonder de oriëntatie van het chassis te veranderen.
+
+Het geheel wordt beschermd door een externe behuizing (schelp), die tevens dient als montageplatform voor de elektronica en de noodzakelijke sensoren, waaronder de LiDAR en IMU.
+
+\subsection{URDF-exportmethodiek via Onshape-to-Robot}
+Voor de simulatie in NVIDIA Isaac Sim is een accuraat \textit{Unified Robot Description Format} (URDF) essentieel. Om een schone en functionele export vanuit Onshape te garanderen, is een specifieke methodiek gehanteerd waarbij de complexiteit van het CAD-model werd gereduceerd tot de essentie voor simulatie.
+
+\subsubsection{Assembly-voorbereiding en Fysische Eigenschappen}
+Er is een specifieke \textit{export-assembly} gecreëerd waarin redundante onderdelen (zoals bouten of esthetische details) werden verwijderd om "computational clutter" te voorkomen. Aan elk functioneel onderdeel in Onshape is een specifiek materiaal toegewezen. Dit is cruciaal voor de automatische berekening van de massa en de traagheidstensor (\textit{inertia}) binnen de URDF, wat essentieel is voor realistische fysica-interacties \autocite{Tan2018}.
+
+Onderdelen zoals de aandrijfmotoren hebben geen directe visuele functie in de simulator, maar zijn expliciet behouden om de massaverdeling van de robot accuraat weer te geven. Sensoren zijn opgenomen in het model om hun exacte ruimtelijke coördinaten ten opzichte van de \textit{base\_link} vast te leggen.
+
+\subsubsection{Mate-configuratie en Joint-transformatie}
+De conversie van Onshape \textit{mates} naar URDF \textit{joints} vereist een strikte naamgeving zodat de \texttt{onshape-to-robot} API de transformaties correct kan interpreteren. Hierbij zijn de volgende conventies toegepast:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\textbf{Onshape Mate} & \textbf{Prefix} & \textbf{URDF Joint Type} \\hline
+Fastened Mate         & \texttt{fix\_}  & Fixed Joint              \\
+Revolute Mate         & \texttt{dof\_}  & Revolute Joint           \\
+Slider Mate           & \texttt{dof\_}  & Prismatic Joint          \\
+\end{tabular}
+\caption{Conversietabel van Onshape mates naar URDF joints.}
+\end{table}
+
+De \textit{baseplate} is gepositioneerd als het eerste element in de hiërarchie, waardoor dit automatisch als de \textit{root link} van de robot wordt gedefinieerd.
+
+\subsubsection{Post-processing van de URDF-data}
+De export via de \texttt{onshape-to-robot} tool \autocite{Rhoban2025} genereert ruwe XML-data waarbij numerieke waarden vaak een overmatige precisie bevatten in wetenschappelijke notatie. Om de leesbaarheid en stabiliteit binnen ROS 2 te verbeteren, is een custom Python-script ontwikkeld om de geëxporteerde URDF na te verwerken. Zoals getoond in Listing~\ref{lst:clean-urdf} worden coördinaten afgerond, padnotaties genormaliseerd en noodzakelijke parameters toegevoegd, zoals de expliciete \texttt{base\_link}-definitie.
+
+\begin{listing}[h]
+\caption{Post-processing van de URDF-export via \texttt{clean\_urdf.py}.}
+\label{lst:clean-urdf}
+\begin{minted}{python}
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
+INPUT_URDF = "sora/robot.urdf"
+OUTPUT_URDF = "sora.urdf"
+
+# Threshold below which values are treated as zero
+EPS = 1e-6
+
+
+def clamp_near_zero(value: float) -> float:
+    return 0.0 if abs(value) < EPS else value
+
+
+def parse_floats(attr: str | None):
+    if attr is None:
+        return None
+    parts = attr.strip().split()
+    if not parts:
+        return None
+    vals = []
+    for p in parts:
+        try:
+            vals.append(float(p))
+        except ValueError:
+            return None
+    return vals
+
+
+def format_floats(values):
+    out = []
+    for v in values:
+        v = clamp_near_zero(v)
+        # Format compactly, but without scientific notation for tiny zeros
+        if v == 0.0:
+            out.append("0")
+        else:
+            out.append(f"{v:.8g}")
+    return " ".join(out)
+
+
+def clean_origin_attributes(elem: ET.Element):
+    # URDF origins live as <origin xyz="..." rpy="..."/>
+    if elem.tag != "origin":
+        return
+
+    xyz = elem.get("xyz")
+    rpy = elem.get("rpy")
+
+    xyz_vals = parse_floats(xyz)
+    if xyz_vals is not None:
+        elem.set("xyz", format_floats(xyz_vals))
+
+    rpy_vals = parse_floats(rpy)
+    if rpy_vals is not None:
+        elem.set("rpy", format_floats(rpy_vals))
+
+
+def clean_limit_attributes(elem: ET.Element):
+    # <limit lower="..." upper="..." effort="..." velocity="..."/>
+    if elem.tag != "limit":
+        return
+
+    for key in ("lower", "upper"):
+        val_str = elem.get(key)
+        if val_str is None:
+            continue
+        try:
+            v = float(val_str)
+        except ValueError:
+            continue
+        v = clamp_near_zero(v)
+        if v == 0.0:
+            elem.set(key, "0")
+        else:
+            elem.set(key, f"{v:.8g}")
+
+
+def clean_mesh_filenames(elem: ET.Element):
+    # <mesh filename="package://Sora/assets\foo.stl"/>
+    if elem.tag != "mesh":
+        return
+
+    fname = elem.get("filename")
+    if not fname:
+        return
+
+    # Replace backslashes with forward slashes
+    cleaned = fname.replace("\\", "/")
+    elem.set("filename", cleaned)
+
+
+def main():
+    urdf_path = Path(INPUT_URDF)
+    tree = ET.parse(urdf_path)
+    root = tree.getroot()
+
+    for elem in root.iter():
+        clean_origin_attributes(elem)
+        clean_limit_attributes(elem)
+        clean_mesh_filenames(elem)
+
+    out_path = urdf_path.with_name(OUTPUT_URDF)
+    tree.write(out_path, encoding="utf-8", xml_declaration=True)
+    print(f"Cleaned URDF written to: {out_path}")
+
+
+if __name__ == "__main__":
+    main()
+
+\end{minted}
+\end{listing}
+
+\begin{listing}[h]
+\caption{Configuratiebestand voor de export-pijplijn.}
+\begin{minted}{json}
+{
+    "url": "https://cad.onshape.com/documents/1bcd0b375ffec5e3aa19613e/w/249a0b509e8671ba52c5d0b4/e/28c1014bbe734fb9e5c3eab2",
+    "output_format": "urdf",
+    "package_name": "Sora",
+    "robot_name": "sora"
+
+}
+\end{minted}
+\end{listing}
+
+Het uiteindelijke resultaat van deze pijplijn is een URDF-pakket inclusief een \textit{assets}-folder met de vereiste mesh-bestanden (.stl of .obj), die de visuele en collision-geometrie voor zowel ROS 2 als Isaac Sim definiëren.
+
+\section{Fysieke Constructie en Systeemintegratie}
+\section{Simulatie-opzet in Isaac Sim}
