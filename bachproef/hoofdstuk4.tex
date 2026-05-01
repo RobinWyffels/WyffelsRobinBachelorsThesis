@@ -172,4 +172,171 @@ if __name__ == "__main__":
 Het uiteindelijke resultaat van deze pijplijn is een URDF-pakket inclusief een \textit{assets}-folder met de vereiste mesh-bestanden (.stl of .obj), die de visuele en collision-geometrie voor zowel ROS 2 als Isaac Sim definiëren.
 
 \section{Fysieke Constructie en Systeemintegratie}
-\section{Simulatie-opzet in Isaac Sim}
+De realisatie van de fysieke robot vereiste een nauwe integratie tussen diverse hardwarecomponenten en een gedistribueerd softwaresysteem. In deze sectie worden de elektronische architectuur, de energievoorziening en de configuratie van het \textit{Robot Operating System} (ROS 2) toegelicht.
+
+\subsubsection{Elektronische Architectuur en Sensoren}
+\label{sec:fysieke_constructie}
+De rekenkracht van de robot is verdeeld over twee complementaire computereenheden om te voldoen aan de specifieke eisen van de sensoren en actuatoren. Als hoofdcomputer fungeert een \textbf{Raspberry Pi 5 (16GB)}, die verantwoordelijk is voor de globale navigatiestack en de aansturing van de motoren. Vanwege het ontbreken van CUDA-cores op de Raspberry Pi, is een \textbf{NVIDIA Jetson Nano} toegevoegd als dedicated processor voor de visuele odometrie van de \textbf{Stereolabs ZED Mini} camera.
+
+De volledige \textit{Bill of Materials} (BOM) voor de elektronische assemblage is samengevat in de onderstaande tabel:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{ll}
+\hline
+\textbf{Component} & \textbf{Functie} \\
+\hline
+Raspberry Pi 5 (16GB) & Hoofdcomputer (Nav2, SLAM, Motor control) \\
+NVIDIA Jetson Nano & Compute unit voor ZED Mini (CUDA processing) \\
+2x Cytron MDD10A & Motorcontrollers voor vier aandrijfmotoren \\
+4x 5840-31ZY Worm DC Motors & Aandrijving met geïntegreerde encoders (12V) \\
+YDLIDAR T-mini Plus & LiDAR sensor voor 2D-omgevingsdetectie \\
+Stereolabs ZED Mini & Stereoscopische camera voor visuele odometrie \\
+Arduino Mega 2560 + RAMPS 1.4 & Besturing en closed-loop liftmechanisme \\
+2x NEMA 17 Stepper Motors & Actuators voor het liftplatform \\
+\hline
+\end{tabular}
+\caption{Overzicht van de belangrijkste elektronische componenten.}
+\end{table}
+
+Vanwege de specifieke karakteristieken van Mecanum-wielen, waarbij slip inherent is aan de beweging, is ervoor gekozen om de odometrie-data primair te genereren via de ZED Mini camera in plaats van wiel-encoders. Dit verhoogt de nauwkeurigheid van de positiebepaling aanzienlijk tijdens holonome verplaatsingen.
+
+\subsubsection{Energievoorziening en Bedrading}
+Voor de voeding is gekozen voor twee \textbf{Einhell 18V/5.2Ah Power X-Change} batterijen. Deze keuze is gebaseerd op de geïntegreerde beschermingscircuits tegen overbelasting en diepontlading binnen de batterijbehuizing. De stroomvoorziening is verdeeld over twee circuits:
+\begin{itemize}
+\item \textbf{Circuit 1 (Logica):} Via een XY-SK80 Buck-Boost converter en een AZDelivery Step-Down converter wordt een stabiele 5V geleverd aan zowel de Raspberry Pi (5A) als de Jetson Nano (4A).
+\item \textbf{Circuit 2 (Aandrijving):} Een AZDelivery Step-Down converter verlaagt de spanning naar 10V voor de motorcontrollers. Hoewel de motoren een nominale spanning van 12V hebben, is gekozen voor \textit{undervolting} om de thermische belasting te beperken.
+\end{itemize}
+
+\subsubsection{Software-integratie en Gedistribueerd ROS 2 Netwerk}
+De integratie tussen de Raspberry Pi en de Jetson Nano vormde een significante uitdaging vanwege incompatibiliteit in besturingssystemen. Voor een stabiele werking binnen het ROS-domein is een peer-to-peer ethernetverbinding opgezet waarbij \texttt{chronyc} zorgt voor de klok-synchronisatie tussen beide borden.
+
+\textbf{De Jetson Nano Configuratie:}
+De Jetson Nano wordt officieel niet langer ondersteund boven Ubuntu 18.04 (JetPack 4.6), wat compatibiliteitsproblemen oplevert met moderne ROS 2 wrappers van Stereolabs \autocite{zed_sdk_3_8}. Om dit te overbruggen, is een aangepaste \textbf{Ubuntu 20.04 image} van Qengineering gebruikt \autocite{Qengineering2026}. Hierdoor was het mogelijk om \textbf{ROS 2 Foxy} native te draaien, wat volledige ondersteuning biedt voor de ZED ROS 2 wrapper \autocite{zed_ros2_wrapper_foxy_humble_3_8_2}. De Jetson publiceert kritieke topics zoals pointclouds en odometrie, die via de \texttt{rmw\_cyclonedds\_cpp} middleware toegankelijk zijn voor de rest van het netwerk.
+
+\textbf{De Raspberry Pi Configuratie:}
+De Pi draait op \textbf{Ubuntu 24.04} met \textbf{ROS 2 Jazzy}. Om flexibel te kunnen schakelen tussen de fysieke robot en de simulator, is een script-gebaseerde benadering gekozen voor de omgevingsvariabelen. Hierbij moet worden opgemerkt dat de keuze voor de middleware (RMW) werd gedicteerd door externe compatibiliteitsfactoren:
+
+\begin{itemize}
+\item \textbf{IRL Mode (CycloneDDS):} Voor de fysieke robot wordt \texttt{rmw\_cyclonedds\_cpp} gebruikt. Deze middleware geniet de voorkeur vanwege de superieure stabiliteit en betrouwbaarheid bij de communicatie tussen de Raspberry Pi en de Jetson Nano.
+\item \textbf{Sim Mode (FastDDS):} Voor de simulatie-modus is de overstap naar \texttt{rmw\_fastrtps\_cpp} (FastDDS) noodzakelijk. Hoewel CycloneDDS technisch sterker is, bleek deze niet compatibel met de Windows-architectuur waarop Isaac Sim draait. Om de communicatie via de \textit{Isaac ROS Bridge} mogelijk te maken, was het gebruik van FastDDS derhalve een randvoorwaarde.
+\end{itemize}
+
+De volledige broncode voor de ROS 2-configuratie en de drivers is publiek toegankelijk via GitHub \autocite{project_sora_ros}. De drivers voor de YDLIDAR sensor zijn eveneens geïntegreerd via de officiële ROS 2 driver en SDK \autocite{ydlidar_ros2_driver, ydlidar_sdk}.
+
+
+
+\subsection{Simulatie-opzet in NVIDIA Isaac Sim}
+\label{sec:isaac_sim_setup}
+
+Voor de virtuele validatie van de robot is gebruikgemaakt van NVIDIA Isaac Sim (versie 5.1.0), geïnstalleerd volgens de officiële documentatie \autocite{isaac_sim_quick_install}. Deze sectie beschrijft de configuratie van de communicatie-bridge, de import-methodiek en de sensormodellering binnen de Omniverse-omgeving.
+
+\subsubsection{Netwerkconfiguratie en Middleware-omgeving}
+Een cruciaal aspect van de hybride opstelling is de communicatie tussen de Raspberry Pi (Linux) en het simulatieplatform (Windows). Terwijl de fysieke robot gebruikmaakt van \texttt{CycloneDDS} vanwege de superieure betrouwbaarheid in gedistribueerde systemen, bleek deze middleware binnen de Windows-installatie van Isaac Sim niet functioneel. Om interoperabiliteit te garanderen, is de Raspberry Pi geconfigureerd om in simulatiemodus over te schakelen naar \texttt{rmw\_fastrtps\_cpp} (FastDDS).
+
+Alvorens Isaac Sim wordt geïnitialiseerd, dienen de omgevingsvariabelen binnen de Windows-terminal correct te worden gedefinieerd om de \textit{ROS 2 Bridge} te koppelen aan de lokale Humble-distributie en de juiste middleware te forceren:
+
+\begin{listing}[h]
+\caption{Initialisatie van de ROS 2 omgeving in Windows PowerShell.}
+\begin{minted}{powershell}
+$env:ROS_DISTRO = "humble"
+$env:RMW_IMPLEMENTATION = "rmw_fastrtps_cpp"
+$env:PATH = "$env:PATH;C:/isaaclab_ws/.venv/lib/site-packages/isaacsim/exts/isaacsim.ros2.bridge/humble/lib"
+\end{minted}
+\end{listing}
+
+\subsubsection{Import van de Digitale Tweeling en Fysische Optimalisatie}
+Hoewel Isaac Sim diverse import-extensies biedt, is in dit onderzoek gekozen voor de \texttt{URDF Importer}. Deze methode resulteerde in een superieure interpretatie van de hiërarchische \textit{joint}-structuur en coördinatensystemen zoals gedefinieerd in Onshape.
+
+Om de fysica-engine (\textit{PhysX}) te ontlasten en de simulatiestabiliteit te verhogen, is een vereenvoudigd collision-model gehanteerd. Complexe geometrische collisions van wielen en de basisplaat zijn uitgeschakeld. In plaats daarvan is voor de Mecanum-locomotie een rekenkundig efficiënte \textit{workaround} geïmplementeerd:
+\begin{enumerate}
+\item \textbf{Mecanum Materiaal:} Er is een \textit{Rigid Body Material} gecreëerd met nulwaarden voor zowel dynamische als statische frictie en restitutie.
+\item \textbf{Collision Spheres:} Onder elk wiel is een geometrische sfeer (\textit{sphere prim}) geplaatst, voorzien van een \textit{sphere collider} en het bovengenoemde wrijvingsloze materiaal.
+\item \textbf{Kinematische Aandrijving:} De hoofdentiteit van de robot is voorzien van een \textbf{D6Joint} met drives op de X- en Y-translatieassen en de Z-rotatieas. Door een extreem hoge demping (\textit{damping}: $10^6$) en nul-stijfheid (\textit{stiffness}) in te stellen, kan de robot nauwkeurig worden aangestuurd via een \textit{Velocity Target} vanuit de Nav2-stack, zonder de computationele last van het simuleren van individuele Mecanum-rollen.
+\end{enumerate}
+
+\subsubsection{Virtuele Sensormodellering}
+Om de digitale tweeling van consistente data te voorzien, zijn virtuele equivalenten van de fysieke sensoren geconfigureerd:
+\begin{itemize}
+\item \textbf{LiDAR (YDlidar T-mini Plus):} Onder de \texttt{laser\_frame} prim is een \textit{Rotary 2D RTX Lidar} geplaatst. De parameters zijn handmatig gesynchroniseerd met de technische specificaties van de fysieke YDlidar, waaronder een scanratio van 10 Hz, een bereik van 12 meter en een specifieke hoekresolutie.
+\item \textbf{Visuele Odometrie (ZED Mini):} Hoewel Isaac Sim een specifiek model voor de ZED X bevat, is deze ingezet als representatie voor de ZED Mini. Aangezien de simulator diepte-informatie direct uit de scène-geometrie kan extraheren (onafhankelijk van de camera-offset), is de specifieke hardwareversie ondergeschikt aan de correcte publicatie van de pointcloud- en odometrie-topics naar ROS 2.
+\item \textbf{Traagheidsmeting (IMU):} Op de \texttt{base\_link} is een IMU-sensor geconfigureerd voor het leveren van lineaire acceleratie en hoeksnelheid data.
+\end{itemize}
+
+De integratie van deze sensoren geschiedt via \textit{ActionGraphs}, waarbij de interne simulatietijd en sensordata worden vertaald naar ROS-berichten. De configuratie van deze graphs is essentieel voor de latere analyse van de \textit{software-to-software gap}.
+
+\subsubsection{Action Graph-architectuur en Signaalverwerking}
+\label{subsubsec:action_graph}
+
+De communicatie tussen de virtuele robot in Isaac Sim en de externe ROS 2-omgeving op de Raspberry Pi wordt gefaciliteerd door een \textit{Action Graph} (OmniGraph). Deze grafische programmeeromgeving verzorgt de datastroom tussen de simulatie-\textit{prims} en de ROS-middleware. De kern van de grafiek wordt aangestuurd door een \texttt{On Playback Tick}-node, die zorgt voor de synchronisatie met de simulatiestappen.
+
+\textbf{Aansturing en Twist-conversie:}
+Een specifieke uitdaging bij de aansturing van de robot is de discrepantie tussen de \texttt{Twist}-berichtformaten van ROS 2 Humble (intern in Isaac Sim) en ROS 2 Jazzy (op de Raspberry Pi). Vanwege het ontbreken van \textit{CycloneDDS}-ondersteuning op de Windows-host is een directe integratie via standaard communicatieprotocollen bemoeilijkt. 
+
+Om dit te overbruggen, is een directe communicatielink opgezet via een \textit{Custom Python Scripting Node} binnen OmniGraph. Op de Raspberry Pi draait het script \texttt{twist\_to\_array.py} (te vinden in de GitHub repository onder \texttt{src/sora\_base\_control/sora\_base\_control/}), dat \texttt{Twist}-berichten converteert naar een UDP-bytebuffer \autocite{project_sora_ros}. Deze data wordt via een peer-to-peer verbinding naar poort 5005 van de simulatie-host gestuurd.
+
+De scripting node in Isaac Sim (zie Listing \ref{lst:udp_script}) voert de volgende stappen uit per simulatiestap:
+\begin{enumerate}
+    \item \textbf{UDP Deserialisatie:} De node leest de binnenkomende buffer uit via een niet-blokkerende socket en pakt de lineaire en angulaire snelheden uit (\textit{vx, vy, wz}).
+    \item \textbf{Vector Transformatie:} Aangezien de navigatie-stack commando's stuurt in het lokale referentiekader van de robot, berekent het script de huidige rotatie van de \texttt{base\_link} in de wereldcoördinaten van de simulator via de \texttt{UsdGeom} API.
+    \item \textbf{Global Velocity Mapping:} De lokale vectoren worden getransformeerd naar globale vectoren via \texttt{rotation.TransformDir(local\_vel)}. Dit is noodzakelijk omdat de \textit{D6Joint} in Isaac Sim wordt aangestuurd op basis van wereldassen.
+    \item \textbf{Joint Actuatie:} De berekende waarden worden direct toegewezen aan de \texttt{targetVelocity} attributen van de \texttt{D6Joint}.
+\end{enumerate}
+
+\begin{listing}[h]
+\caption{Custom Python Script voor de aansturing van de D6Joint via UDP.}
+\label{lst:udp_script}
+\begin{minted}[frame=lines, framesep=2mm, baselinestretch=1.2, fontsize=\footnotesize, linenos]{python}
+# Fragment van de compute-functie in de Isaac Sim Script Node
+def compute(db):
+    try:
+        if not hasattr(db.per_instance_state, 'sock'): return False
+        
+        while True:
+            ready = select.select([db.per_instance_state.sock], [], [], 0.0)
+            if ready[0]:
+                data, _ = db.per_instance_state.sock.recvfrom(24)
+                if len(data) == 24:
+                    vals = struct.unpack('ddd', data)
+                    db.per_instance_state.vx, db.per_instance_state.vy, db.per_instance_state.wz = vals
+            else:
+                break
+                
+        # Transformatie van lokaal naar globaal referentiekader
+        xform = UsdGeom.Xformable(robot_prim)
+        world_transform = xform.ComputeLocalToWorldTransform(time)
+        rotation = world_transform.ExtractRotation()
+        
+        local_vel = Gf.Vec3d(db.per_instance_state.vx, db.per_instance_state.vy, 0.0)
+        global_vel = rotation.TransformDir(local_vel)
+        
+        # Toewijzing aan D6Joint
+        joint_prim.GetAttribute("drive:transX:physics:targetVelocity").Set(global_vel[0])
+        joint_prim.GetAttribute("drive:transY:physics:targetVelocity").Set(global_vel[1])
+        joint_prim.GetAttribute("drive:rotZ:physics:targetVelocity").Set(db.per_instance_state.wz * 57.2958)
+    except Exception as e:
+        carb.log_error(f"UDP Vector Math Error: {e}")
+    return True
+\end{minted}
+\end{listing}
+
+\textbf{Sensorische Datastromen:}
+De publicatie van sensordata naar het ROS-domein is gestructureerd volgens de specifieke eisen van de fysieke architectuur:
+
+\begin{itemize}
+    \item \textbf{LiDAR-data:} Via een \texttt{Create Render Product}-node, gekoppeld aan het \textit{RTX Lidar}-object, worden de scans doorgegeven aan een \texttt{ROS2 RTX Lidar Helper}. Deze node publiceert de laserdata conform het verwachte frame en topic van de fysieke hardware.
+    \item \textbf{Camera-integratie (ZED Mini simulatie):} Voor de visuele data wordt een \texttt{Create Render Product} gericht op de linker virtuele camera (\texttt{CameraLeft}). Deze output wordt gedistribueerd naar drie afzonderlijke \texttt{ROS2 Camera Helper}-nodes om de fysieke camera-output (\textit{RGB}, \textit{Depth} en \textit{Pointcloud}) te emuleren op de verwachte topics (\texttt{/zedm/zed\_node/...}).
+\end{itemize}
+
+\textbf{Odometrie en IMU-emulatie:}
+In tegenstelling tot de fysieke robot, waar de odometrie wordt berekend op basis van visuele data, wordt in Isaac Sim gebruikgemaakt van de \textit{Ground Truth}-data via de \texttt{Isaac Compute Odometry}-node. Deze wordt gepubliceerd op \texttt{/zedm/zed\_node/odom}, waardoor de navigatie-stack geen onderscheid hoeft te maken tussen simulatie en realiteit. De IMU-data wordt op analoge wijze geëmuleerd via de \texttt{Isaac Read IMU}-node.
+
+In Figuur \ref{fig:action_graph_full} is de volledige visuele structuur van de Action Graph weergegeven, inclusief de verbindingen tussen de scripting node, de sensoren en de ROS 2 Bridge.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{afbeeldingen/action_graph_full.png}
+    \caption{Volledig overzicht van de Action Graph in Isaac Sim, waarin de datastroom tussen de UDP-scripting node en de sensor-helpers zichtbaar is.}
+    \label{fig:action_graph_full}
+\end{figure}
