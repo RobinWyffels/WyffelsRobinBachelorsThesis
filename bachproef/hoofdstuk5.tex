@@ -7,10 +7,14 @@ Na de succesvolle configuratie van de digitale tweeling en de communicatie-inter
 \label{subsec:observatie_rubberbanding}
 
 De testfase werd geïnitieerd door de uitvoering van de globale navigatie-launchfile op de Raspberry Pi via het commando:
+\begin{listing}[h]
+\caption{Start commando raspberry pi voor simulatie.}
+\label{lst:commando_simulatie}
 \begin{minted}{bash}
 source ~/ros_sim.sh
 ros2 launch sora_slam sora_main_control.launch.py use_sim_time:=true
 \end{minted}
+\end{listing}
 
 Dit startte de \texttt{twist\_to\_array}-node voor de UDP-communicatie en de Foxglove-server voor real-time datavisualisatie. Bij activering van de simulatie in Isaac Sim werden de sensortopics (\texttt{odom}, \texttt{scan}, \texttt{IMU}) correct ontvangen door de Raspberry Pi en gevisualiseerd in een 3D-representatie op basis van de URDF.
 
