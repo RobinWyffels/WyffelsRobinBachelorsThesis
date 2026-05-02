@@ -1,2 +1,75 @@
 \chapter{\IfLanguageName{dutch}{Diagnostische Analyse van de Integratiefouten}{Diagnostic Analysis of Integration Errors}}%
 \label{ch:diagnostische_analyse}
+
+Na de succesvolle configuratie van de digitale tweeling en de communicatie-interface, werd overgegaan tot de integratiefase met de navigatie-stack. In deze fase werd de robot onderworpen aan initiële tests binnen de SLAM-omgeving (\textit{Simultaneous Localization and Mapping}). Hoewel de individuele subsystemen (UDP-bridge, LiDAR-output en motorbesturing) functioneel leken, traden er bij de systeemintegratie kritieke fouten op. Deze sectie documenteert de observaties, de uitgevoerde tests en de uiteindelijke technische conclusie betreffende de onoverkomelijke inconsistenties tussen de virtuele en fysieke omgeving.
+
+\subsection{Observatie van het Rubberbanding-effect}
+\label{subsec:observatie_rubberbanding}
+
+De testfase werd geïnitieerd door de uitvoering van de globale navigatie-launchfile op de Raspberry Pi via het commando:
+\begin{minted}{bash}
+source ~/ros_sim.sh
+ros2 launch sora_slam sora_main_control.launch.py use_sim_time:=true
+\end{minted}
+
+Dit startte de \texttt{twist\_to\_array}-node voor de UDP-communicatie en de Foxglove-server voor real-time datavisualisatie. Bij activering van de simulatie in Isaac Sim werden de sensortopics (\texttt{odom}, \texttt{scan}, \texttt{IMU}) correct ontvangen door de Raspberry Pi en gevisualiseerd in een 3D-representatie op basis van de URDF.
+
+Echter, bij de eerste pogingen tot lokalisatie via de \texttt{slam\_toolbox} werd een fenomeen geobserveerd dat technisch omschreven kan worden als het \textbf{'rubberbanding-effect'}. De robot vertoonde een repetitief en inconsistent bewegingspatroon: zodra de robot in de simulator vooruit reed, verschoof de robot-base in de visualisatie, om vervolgens abrupt — bij elke update-cyclus van de SLAM-optimizer — terug te springen naar de oorspronkelijke startpositie op de kaart. Dit leidde tot een gefragmenteerde en onbruikbare omgevingskaart.
+
+\subsection{Troubleshooting en Root Cause Analysis}
+\label{subsec:troubleshooting}
+
+Om de oorzaak van dit gedrag te achterhalen, is een stapsgewijze analyse uitgevoerd, waarbij de nadruk lag op geometrische fouten en de consistentie van de \textit{Transform Tree} (TF).
+
+\subsubsection{Geometrische Discrepanties en Frame-oriëntatie}
+Een primaire observatie was een rotatiefout van 180° in de LiDAR-data. Objecten die zich in de simulator fysiek vóór de robot bevonden, werden in Foxglove achter de robot geprojecteerd. Een initiële poging om dit te corrigeren via het attribuut \texttt{startAzimuthOffsetDeg} binnen de \texttt{RTX Lidar}-instellingen van Isaac Sim gaf geen resultaat. Dit dwong tot een handmatige fysieke rotatie van de laser-prim binnen de USD-omgeving (180° over de Z-as) om de visuele scans te synchroniseren met de robot-oriëntatie in ROS.
+
+Ondanks de correctie van de scangegevens bleef de lokalisatie instabiel door een fundamentele mismatch in het wereld-coördinatenstelsel. Er werd vastgesteld dat Isaac Sim de robot 180° gedraaid in de wereld had geplaatst ten opzichte van het ROS-referentiekader. Wanneer de robot in de simulator "vooruit" reed, bewoog deze in negatieve X-richting binnen de Isaac-wereld. De odometrie-node rapporteerde deze negatieve verplaatsing correct; echter, binnen de \textit{REP-105} standaard van ROS 2 Jazzy wordt een negatieve X-verplaatsing geïnterpreteerd als een achterwaartse beweging. Dit veroorzaakte een direct conflict tussen de visuele voorwaartse beweging in de simulator en de logische achterwaartse beweging in de navigatie-stack.
+
+\subsubsection{Wiskundige Correcties en Simulatie-manipulatie}
+\label{subsubsec:wiskundige_correcties}
+
+Gedurende het onderzoek zijn diverse strategieën toegepast om de odometrie-data binnen de simulator wiskundig te inverteren. Het doel hiervan was om de negatieve verplaatsingsvectoren van Isaac Sim te transformeren naar positieve ROS-verplaatsingen, conform de verwachting van de navigatiestack. De volgende methoden zijn hiertoe geëvalueerd:
+
+\begin{itemize}
+    \item \textbf{RobotFront Configuratie:} Er is getracht de rijrichting te herdefiniëren door de \texttt{robotFront} input op de \textit{Publish Odometry} node te manipuleren. Deze parameter, die de oriëntatie van de x-as binnen de simulator bepaalt, bleek echter geen invloed te hebben op de gerapporteerde globale odometrie-data in het ROS-domein.
+    \item \textbf{Math Node Integratie en Vector-inversie:} Tussen de \texttt{Isaac Compute Odometry} node en de uiteindelijke publicatie-nodes is een complexe transformatie-keten in de \textit{Action Graph} geïmplementeerd. Door gebruik te maken van \textit{Break Vector3} en \textit{Multiply} nodes werden de lineaire X- en Y-snelheden, evenals de X- en Y-posities, expliciet geïnverteerd (vermenigvuldiging met -1.0). Hoewel dit de bewegingsrichting in visualisatietools zoals Foxglove en RViz corrigeerde, loste het de onderliggende transformatiefouten in de SLAM-fase niet op.
+    \item \textbf{Chassis Prim Manipulatie:} Er zijn specifieke referentie-\textit{prims} binnen de USD-hiërarchie gecreëerd die exact 180° gedraaid stonden ten opzichte van de fysieke \texttt{base\_link}. Door deze gemanipuleerde \textit{prims} als alternatief chassis-frame te definiëren voor de odometrie-berekening, werd geprobeerd een wiskundige match te forceren met de ROS-referentiestelsels.
+\end{itemize}
+
+\subsubsection{Geavanceerde ROS-interventies en Shadow Links}
+Toen de manipulaties binnen de simulator onvoldoende bleken om het rubberbanding-effect te elimineren, verschoof de focus naar correcties binnen de ROS-omgeving zelf. Hierbij is de URDF van de robot uitgebreid met zogenaamde \textit{shadow links}. Dit zijn virtuele frames in de transformatieboom die parallel lopen aan de sensoren, maar met een tegengestelde oriëntatie. Door de \texttt{slam\_toolbox} te instrueren om data te verwerken via deze geroteerde frames, werd getracht de visuele mismatch tussen de LiDAR-scans en de robotbeweging te compenseren.
+
+Deze fase van het onderzoek kenmerkte zich door een iteratief proces van \textit{trial-and-error}, waarbij elke softwarematige aanpassing direct werd getoetst aan de stabiliteit van de $TF$-tree. De volledige evolutie van deze experimentele correcties, inclusief de diverse iteraties van de \textit{shadow links} en de bijbehorende configuratie-wijzigingen in de Nav2-stack, is gedocumenteerd in de broncode. Deze ontwikkelingsgeschiedenis kan worden geraadpleegd in de \textit{commit history} van de GitHub-repository \autocite{Wyffels2026}. 
+
+De analyse van deze commits toont aan dat, hoewel individuele datastromen correct konden worden weergegeven, de fundamentele temporele synchronisatie en de rekenkundige inconsistentie tussen de NVIDIA-geometrie en de ROS-standaarden (REP-103/105) een barrière bleven vormen die met loutere frame-rotaties niet te overbruggen viel.
+
+\subsection{Vastgestelde Discrepanties en Validatie van de Hypothese}
+\label{subsec:validatie_hypothese}
+
+De analyse leidde tot de conclusie dat de odometrie-data en de LiDAR-scangeometrie elkaar bleven tegenspreken binnen de SLAM-optimizer. Het "terugspringen" van de robot is de reactie van de \texttt{slam\_toolbox} op een waargenomen onmogelijkheid in de verplaatsing.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lp{6cm}p{5cm}}
+\hline
+\textbf{Test} & \textbf{Methodiek} & \textbf{Geobserveerd Resultaat} \\ \hline
+Timing-correlatie & Loggen van \texttt{map $\rightarrow$ odom} transformaties t.o.v. SLAM-events. & Sprongen vallen exact samen met optimizer-updates. \\
+Rotatie-test & Draaien op de plaats met bevroren translatie. & Rubberbanding is nagenoeg afwezig; rotatie-odometrie is stabiel. \\
+Trigger-gevoeligheid & Verhogen van \texttt{minimum\_travel\_distance} (drempelwaarde voor updates). & Snap-frequentie neemt proportioneel af met de drempelwaarde. \\ \hline
+\end{tabular}
+\caption{Overzicht van diagnostische tests ter identificatie van de integratiefout.}
+\end{table}
+
+\textbf{Analyse van de resultaten:}
+\begin{enumerate}
+    \item \textbf{Sync-momenten:} De sprongen vallen samen met de optimizer-cycli, wat bewijst dat de \texttt{slam\_toolbox} de odometrie verwerpt ten gunste van de scangegevens.
+    \item \textbf{Translatie-conflict:} De stabiliteit tijdens pure rotatie wijst erop dat de fout specifiek gelokaliseerd is in de lineaire translatie-as. Ondanks de wiskundige inversie via math nodes, bleef er een geometrische inconsistentie bestaan tussen de verschuiving in de laserscan en de gerapporteerde odometrische verplaatsing.
+    \item \textbf{Optimizer-gedrag:} Wanneer de robot 0,5 m vooruit rijdt (negatieve X in Isaac, gecorrigeerd naar positieve X voor ROS), publiceert de bridge de verplaatsing. De SLAM-optimizer matcht de nieuwe scan met de kaart. Als de scan-matching geen overtuigende verschuiving ziet die exact overeenkomt met de gecorrigeerde odometrie, past de optimizer een \texttt{map $\rightarrow$ odom} correctie toe die de robot terugtrekt.
+\end{enumerate}
+
+\subsection{Conclusie van de Integratie-analyse}
+De "Sim-to-Real gap" in dit project werd onoverbrugbaar door de cumulatieve effecten van as-inversies en middleware-beperkingen. De noodzaak om een 180° gedraaid wereld-coördinatenstelsel in Isaac Sim handmatig te synchroniseren met ROS 2 Jazzy via UDP-scripting en wiskundige correctie-nodes leidde tot minuscule timing- of schaleringsfouten. In een SLAM-context leiden dergelijke kleine discrepanties tot het falen van de scan-matching optimizer. 
+
+Dit resultaat beantwoordt de deelvragen met een kritische noot: hoewel Isaac Sim krachtige simulatiemogelijkheden biedt, introduceert de Windows-architectuur (zonder native \textit{CycloneDDS}-ondersteuning voor ROS 2) zodanige complexiteit in de TF-tree dat real-time navigatie-validatie voor dit specifieke robotplatform niet betrouwbaar kon worden afgerond.

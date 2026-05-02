@@ -1,18 +1,61 @@
 %%=============================================================================
-%% Conclusie
+%% Hoofdstuk 7: Conclusie
 %%=============================================================================
 
-\chapter{Conclusie}%
+\chapter{\IfLanguageName{dutch}{Conclusie}{Conclusion}}
 \label{ch:conclusie}
 
-% TODO: Trek een duidelijke conclusie, in de vorm van een antwoord op de
-% onderzoeksvra(a)g(en). Wat was jouw bijdrage aan het onderzoeksdomein en
-% hoe biedt dit meerwaarde aan het vakgebied/doelgroep? 
-% Reflecteer kritisch over het resultaat. In Engelse teksten wordt deze sectie
-% ``Discussion'' genoemd. Had je deze uitkomst verwacht? Zijn er zaken die nog
-% niet duidelijk zijn?
-% Heeft het onderzoek geleid tot nieuwe vragen die uitnodigen tot verder 
-%onderzoek?
+In deze bachelorproef is de integratie tussen NVIDIA Isaac Sim en ROS 2 onderzocht aan de hand van een casestudy met een onderduw-AMR. De focus lag op het identificeren van de barrières die een naadloze overgang van simulatie naar realiteit verhinderen. In dit slothoofdstuk worden de deelvragen beantwoord, gevolgd door de eindconclusie en aanbevelingen voor toekomstig onderzoek.
 
-tbd
+\section{Beantwoording van de deelvragen}
+\label{sec:beantwoording_deelvragen}
+
+\subsection{Probleemdomein: De technische integratiebarrière}
+\begin{description}
+    \item[DV1: Hoe verhoudt de USD-geometrie van NVIDIA Isaac Sim zich tot de REP-103-standaard?] Er is een fundamentele mismatch geconstateerd: Isaac Sim hanteert een linkshandig coördinatenstelsel waarbij de voorwaartse as (+Y) haaks staat op de ROS 2-conventie (+X). Dit dwingt tot complexe handmatige rotaties van sensor-prims om visuele consistentie te bereiken.
+    
+    \item[DV2: Welke impact hebben temporele inconsistenties en latency op de TF-tree?] Latency tussen de Windows-host en de Raspberry Pi, gecombineerd met een gebrek aan perfecte kloksynchronisatie, veroorzaakt temporele inconsistenties in de transformatieboom. Dit resulteert in het \textit{rubberbanding}-effect, waarbij de robot herhaaldelijk naar een eerdere positie terugspringt.
+    
+    \item[DV3: In welke mate beïnvloeden Quality of Service (QoS) instellingen de betrouwbaarheid?] Onjuiste QoS-instellingen in de bridge leiden tot gefragmenteerde datastromen. Vooral bij odometrie-pakketten zorgt dit voor gaten in de verplaatsingsdata, wat de SLAM-algoritmen verhindert een stabiele kaart op te bouwen.
+\end{description}
+
+\subsection{Analysedomein: De Sim-to-Real discrepantie}
+\begin{description}
+    \item[DV4: Waarom functioneert de SLAM-stack fysiek wel, maar virtueel niet?] De fysieke robot profiteert van native drivers en stabiele DDS-communicatie (\textit{CycloneDDS}). In de simulatie zorgt de \textit{software-to-software gap} — specifiek de noodzaak voor \textit{FastDDS} op Windows en de as-mismatches — voor conflicterende data die de SLAM-optimizer niet kan verwerken.
+    
+    \item[DV5: Welke parameters in het URDF-exportproces dragen bij aan foutieve transformaties?] De interpretatie van de assen tijdens de export uit Onshape is kritiek. Een verkeerde configuratie van de voorwaartse as in de export-tool leidt tot verschuivingen die direct doorwerken in de instabiliteit van de TF-tree in Isaac Sim.
+    
+    \item[DV6: Welke diagnostische methoden zijn effectief voor het isoleren van integratiefouten?] Het loggen van \texttt{map} $\to$ \texttt{odom} transformaties tijdens SLAM-events bleek essentieel. Ook "rotatietests" (draaien zonder translatie) hielpen om vast te stellen dat de fout specifiek in de lineaire translatie-as van de odometrie zat.
+\end{description}
+
+\subsection{Oplossingsdomein: Strategieën voor Systeemoptimalisatie}
+\begin{description}
+    \item[DV7: Welke URDF-aanpassingen garanderen een match tussen USD en ROS 2?] Het gebruik van \textit{shadow links} en wiskundige inversies via \textit{Math Nodes} kan de rijrichting visueel corrigeren, maar lost de onderliggende logische mismatch niet volledig op. Een structurele herziening van de URDF-bron is noodzakelijk.
+    
+    \item[DV8: Hoe kan een robuust synchronisatieschema het rubberbanding-effect elimineren?] Door gebruik te maken van \texttt{use\_sim\_time:=true} en de simulator-clock als bron te forceren. Echter, volledige eliminatie vereist ook een uniform DDS-protocol over alle systemen om netwerk-jitter te beperken.
+    
+    \item[DV9: Welke best-practices gelden voor een Sim-to-Real transitie met de Isaac ROS Bridge?] Belangrijke richtlijnen zijn: gebruik een native Linux-omgeving voor de simulator, hanteer identieke ROS-distributies op alle nodes, en valideer de TF-boom op as-consistentie vóór de activatie van de navigatie-stack.
+\end{description}
+
+\section{Eindconclusie}
+\label{sec:eindconclusie}
+
+De centrale onderzoeksvraag van deze bachelorproef luidde: \textit{"In welke mate vormen de technische discrepanties in coördinatenstelsels tussen NVIDIA Isaac Sim en ROS 2 een barrière voor de realisatie van een functionele digital twin voor autonome navigatie?"}
+
+Op basis van de resultaten van dit onderzoek kan worden geconcludeerd dat deze technische discrepanties een \textbf{significante barrière} vormen die de realisatie van een volledig functionele \textit{digital twin} in de huidige technologische constellatie verhindert. Hoewel de fysieke robot succesvol navigeert met behulp van de ZED SDK en de Nav2-stack, zorgt de fundamentele mismatch tussen het linkshandige USD-coördinatenstelsel van Isaac Sim en de rechtshandige REP-103 standaard van ROS 2 voor een onoverbrugbare kloof in de data-integriteit.
+
+De barrière manifesteert zich niet enkel in een visuele foutieve oriëntatie, maar dringt door tot de kern van de SLAM-berekeningen. Ondanks wiskundige pogingen om vectoren te inverteren en transformaties handmatig aan te passen via de Action Graph en \textit{shadow links}, bleven de temporele en ruimtelijke fouten leiden tot het \textit{rubberbanding}-effect. De discrepantie in de coördinatenstelsels is daarmee niet louter een cosmetisch probleem, maar een rekenkundige hindernis die de betrouwbaarheid van de odometrie-feedback corrumpeert en de autonome navigatie in de simulator onmogelijk maakt.
+
+\section{Beperkingen en toekomstig onderzoek}
+\label{sec:beperkingen_onderzoek}
+
+Hoewel dit onderzoek de kernoorzaak van de integratiefouten heeft blootgelegd, waren er enkele beperkingen die de reikwijdte van de resultaten beïnvloedden:
+
+\begin{itemize}
+    \item \textbf{Hardware-architectuur en Latency:} Het gebruik van de Raspberry Pi 5 in combinatie met de NVIDIA Jetson Nano introduceerde netwerk-jitter en latency. Dit maakte het moeilijk om puur softwarematige synchronisatieweken te isoleren van vertragingen in de hardware-communicatie.
+    \item \textbf{Besturingssysteem:} De uitvoering van Isaac Sim op een Windows-host beperkte de keuze in DDS-middleware tot FastDDS. Toekomstig onderzoek zou de overstap naar een native Linux-omgeving voor de simulator moeten evalueren om te bepalen of CycloneDDS de stabiliteit van de transformatieboom kan verbeteren.
+    \item \textbf{Softwareversie:} Het onderzoek is uitgevoerd met Isaac Sim 5.1.0 en ROS 2 Jazzy. De recent gelanceerde versie 6.0.0 (Isaac Lab) biedt mogelijk nieuwe integratiemogelijkheden die de besproken coördinaten-mismatches beter opvangen.
+\end{itemize}
+
+Een logisch vervolgonderzoek zou zich moeten richten op het testen van een gecentraliseerde rekenkracht (zoals de NVIDIA Orin-serie) om alle netwerk-bottlenecks te elimineren en de focus volledig te verleggen naar een URDF-configuratie die \textit{native} geoptimaliseerd is voor de USD-geometrie van NVIDIA Omniverse.
 

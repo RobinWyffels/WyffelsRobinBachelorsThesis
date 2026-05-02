@@ -213,7 +213,7 @@ Voor de voeding is gekozen voor twee \textbf{Einhell 18V/5.2Ah Power X-Change} b
 De integratie tussen de Raspberry Pi en de Jetson Nano vormde een significante uitdaging vanwege incompatibiliteit in besturingssystemen. Voor een stabiele werking binnen het ROS-domein is een peer-to-peer ethernetverbinding opgezet waarbij \texttt{chronyc} zorgt voor de klok-synchronisatie tussen beide borden.
 
 \textbf{De Jetson Nano Configuratie:}
-De Jetson Nano wordt officieel niet langer ondersteund boven Ubuntu 18.04 (JetPack 4.6), wat compatibiliteitsproblemen oplevert met moderne ROS 2 wrappers van Stereolabs \autocite{zed_sdk_3_8}. Om dit te overbruggen, is een aangepaste \textbf{Ubuntu 20.04 image} van Qengineering gebruikt \autocite{Qengineering2026}. Hierdoor was het mogelijk om \textbf{ROS 2 Foxy} native te draaien, wat volledige ondersteuning biedt voor de ZED ROS 2 wrapper \autocite{zed_ros2_wrapper_foxy_humble_3_8_2}. De Jetson publiceert kritieke topics zoals pointclouds en odometrie, die via de \texttt{rmw\_cyclonedds\_cpp} middleware toegankelijk zijn voor de rest van het netwerk.
+De Jetson Nano wordt officieel niet langer ondersteund boven Ubuntu 18.04 (JetPack 4.6), wat compatibiliteitsproblemen oplevert met moderne ROS 2 wrappers van Stereolabs \autocite{Stereolabs2026a}. Om dit te overbruggen, is een aangepaste \textbf{Ubuntu 20.04 image} van Qengineering gebruikt \autocite{Qengineering2026}. Hierdoor was het mogelijk om \textbf{ROS 2 Foxy} native te draaien, wat volledige ondersteuning biedt voor de ZED ROS 2 wrapper \autocite{Stereolabs2026}. De Jetson publiceert kritieke topics zoals pointclouds en odometrie, die via de \texttt{rmw\_cyclonedds\_cpp} middleware toegankelijk zijn voor de rest van het netwerk.
 
 \textbf{De Raspberry Pi Configuratie:}
 De Pi draait op \textbf{Ubuntu 24.04} met \textbf{ROS 2 Jazzy}. Om flexibel te kunnen schakelen tussen de fysieke robot en de simulator, is een script-gebaseerde benadering gekozen voor de omgevingsvariabelen. Hierbij moet worden opgemerkt dat de keuze voor de middleware (RMW) werd gedicteerd door externe compatibiliteitsfactoren:
@@ -223,14 +223,14 @@ De Pi draait op \textbf{Ubuntu 24.04} met \textbf{ROS 2 Jazzy}. Om flexibel te k
 \item \textbf{Sim Mode (FastDDS):} Voor de simulatie-modus is de overstap naar \texttt{rmw\_fastrtps\_cpp} (FastDDS) noodzakelijk. Hoewel CycloneDDS technisch sterker is, bleek deze niet compatibel met de Windows-architectuur waarop Isaac Sim draait. Om de communicatie via de \textit{Isaac ROS Bridge} mogelijk te maken, was het gebruik van FastDDS derhalve een randvoorwaarde.
 \end{itemize}
 
-De volledige broncode voor de ROS 2-configuratie en de drivers is publiek toegankelijk via GitHub \autocite{project_sora_ros}. De drivers voor de YDLIDAR sensor zijn eveneens geïntegreerd via de officiële ROS 2 driver en SDK \autocite{ydlidar_ros2_driver, ydlidar_sdk}.
+De volledige broncode voor de ROS 2-configuratie en de drivers is publiek toegankelijk via GitHub \autocite{Wyffels2026}. De drivers voor de YDLIDAR sensor zijn eveneens geïntegreerd via de officiële ROS 2 driver en SDK \autocite{YDLIDAR2026, YDLIDAR2026a}.
 
 
 
 \subsection{Simulatie-opzet in NVIDIA Isaac Sim}
 \label{sec:isaac_sim_setup}
 
-Voor de virtuele validatie van de robot is gebruikgemaakt van NVIDIA Isaac Sim (versie 5.1.0), geïnstalleerd volgens de officiële documentatie \autocite{isaac_sim_quick_install}. Deze sectie beschrijft de configuratie van de communicatie-bridge, de import-methodiek en de sensormodellering binnen de Omniverse-omgeving.
+Voor de virtuele validatie van de robot is gebruikgemaakt van NVIDIA Isaac Sim (versie 5.1.0), geïnstalleerd volgens de officiële documentatie \autocite{NVIDIA2026}. Deze sectie beschrijft de configuratie van de communicatie-bridge, de import-methodiek en de sensormodellering binnen de Omniverse-omgeving.
 
 \subsubsection{Netwerkconfiguratie en Middleware-omgeving}
 Een cruciaal aspect van de hybride opstelling is de communicatie tussen de Raspberry Pi (Linux) en het simulatieplatform (Windows). Terwijl de fysieke robot gebruikmaakt van \texttt{CycloneDDS} vanwege de superieure betrouwbaarheid in gedistribueerde systemen, bleek deze middleware binnen de Windows-installatie van Isaac Sim niet functioneel. Om interoperabiliteit te garanderen, is de Raspberry Pi geconfigureerd om in simulatiemodus over te schakelen naar \texttt{rmw\_fastrtps\_cpp} (FastDDS).
@@ -247,7 +247,7 @@ $env:PATH = "$env:PATH;C:/isaaclab_ws/.venv/lib/site-packages/isaacsim/exts/isaa
 \end{listing}
 
 \subsubsection{Import van de Digitale Tweeling en Fysische Optimalisatie}
-Hoewel Isaac Sim diverse import-extensies biedt, is in dit onderzoek gekozen voor de \texttt{URDF Importer}. Deze methode resulteerde in een superieure interpretatie van de hiërarchische \textit{joint}-structuur en coördinatensystemen zoals gedefinieerd in Onshape.
+Hoewel Isaac Sim diverse import-extensies biedt, is in dit onderzoek gekozen voor de \texttt{URDF Importer}. Deze methode resulteerde in een superieure interpretatie van de hiërarchische \textit{joint}-structuur zoals gedefinieerd in Onshape.
 
 Om de fysica-engine (\textit{PhysX}) te ontlasten en de simulatiestabiliteit te verhogen, is een vereenvoudigd collision-model gehanteerd. Complexe geometrische collisions van wielen en de basisplaat zijn uitgeschakeld. In plaats daarvan is voor de Mecanum-locomotie een rekenkundig efficiënte \textit{workaround} geïmplementeerd:
 \begin{enumerate}
@@ -274,7 +274,8 @@ De communicatie tussen de virtuele robot in Isaac Sim en de externe ROS 2-omgevi
 \textbf{Aansturing en Twist-conversie:}
 Een specifieke uitdaging bij de aansturing van de robot is de discrepantie tussen de \texttt{Twist}-berichtformaten van ROS 2 Humble (intern in Isaac Sim) en ROS 2 Jazzy (op de Raspberry Pi). Vanwege het ontbreken van \textit{CycloneDDS}-ondersteuning op de Windows-host is een directe integratie via standaard communicatieprotocollen bemoeilijkt. 
 
-Om dit te overbruggen, is een directe communicatielink opgezet via een \textit{Custom Python Scripting Node} binnen OmniGraph. Op de Raspberry Pi draait het script \texttt{twist\_to\_array.py} (te vinden in de GitHub repository onder \texttt{src/sora\_base\_control/sora\_base\_control/}), dat \texttt{Twist}-berichten converteert naar een UDP-bytebuffer \autocite{project_sora_ros}. Deze data wordt via een peer-to-peer verbinding naar poort 5005 van de simulatie-host gestuurd.
+Om dit te overbruggen, is een directe communicatielink opgezet via een \textit{Custom Python Scripting Node} binnen OmniGraph. Op de Raspberry Pi draait het script \texttt{twist\_to\_array.py} (te vinden in de GitHub repository onder 
+\texttt{src/sora\_base\_control/sora\_base\_control/}), dat \texttt{Twist}-berichten converteert naar een UDP-bytebuffer \autocite{Wyffels2026}. Deze data wordt via een peer-to-peer verbinding naar poort 5005 van de simulatie-host gestuurd.
 
 De scripting node in Isaac Sim (zie Listing \ref{lst:udp_script}) voert de volgende stappen uit per simulatiestap:
 \begin{enumerate}
