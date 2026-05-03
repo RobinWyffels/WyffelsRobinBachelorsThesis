@@ -12,7 +12,7 @@ Dit onderzoek richt zich op de integratie van NVIDIA Isaac Sim met de ROS 2 Nav2
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
-De overgang van een virtueel model naar een fysiek werkende robot wordt gehinderd door fundamentele verschillen in hoe simulators en robotica-frameworks data interpreteren. Tijdens de uitvoering van dit onderzoek bleek dat de virtuele robot, ondanks een visueel correcte opzet van de digitale tweeling, niet in staat was om via de SLAM Toolbox een ruimte in kaart te brengen. Dit resulteerde in een zogenaamd "rubberbanding"-effect, waarbij de robot herhaaldelijk naar de startpositie teleporteerde zodra sensordata werd verwerkt. De hoofdoorzaak van deze problematiek ligt in een mismatch tussen het coördinatenstelsel van Isaac Sim (Omniverse) en de gestandaardiseerde referentiestelsels van ROS 2 (REP-103 en REP-105). Het ontbreken van gestandaardiseerde richtlijnen om deze discrepanties op te lossen, vormt een directe belemmering voor de effectieve inzet van digital twins in de industrie.
+De overgang van een virtueel model naar een fysiek werkende robot wordt gehinderd door fundamentele verschillen in hoe simulators en robotica-frameworks data interpreteren. Tijdens de uitvoering van dit onderzoek bleek dat de virtuele robot, ondanks een visueel correcte opzet van de digitale tweeling, niet in staat was om via de SLAM Toolbox een ruimte in kaart te brengen. Dit resulteerde in een zogenaamd ``rubberbanding''-effect, waarbij de robot herhaaldelijk naar de startpositie teleporteerde zodra sensordata werd verwerkt. De hoofdoorzaak van deze problematiek ligt in een mismatch tussen het coördinatenstelsel van Isaac Sim (Omniverse) en de gestandaardiseerde referentiestelsels van ROS 2 (REP-103 en REP-105). Het ontbreken van gestandaardiseerde richtlijnen om deze discrepanties op te lossen, vormt een directe belemmering voor de effectieve inzet van digital twins in de industrie.
 
 De doelgroep voor dit onderzoek bestaat uit R\&D-ingenieurs en robotica-ontwikkelaars werkzaam in de logistieke automatisering die overwegen NVIDIA Isaac Sim te implementeren in hun ontwikkelcyclus. Specifiek biedt dit werk cruciale inzichten voor ontwikkelaars die gebruikmaken van de \texttt{isaac\_ros\_bridge} en tegen integratieproblemen aanlopen bij de configuratie van transformatiebomen ($TF$-trees).
 
@@ -58,7 +58,7 @@ Het beoogde resultaat van deze bachelorproef is drieledig:
     \item \textbf{Een oplossingsgericht advies:} Een set aanbevelingen en configuratierichtlijnen die dienen als oplossing voor de geïdentificeerde barrières in de simulatie-pijplijn.
 \end{enumerate}
 
-Het succes van deze proef wordt niet uitsluitend afgemeten aan een perfect werkende simulatie, maar aan de identificatie van de root-cause van de systeemfout. Het doel is om door middel van een foutenanalyse concrete aanbevelingen te formuleren voor de robotica-community om de softwarematige kloof tussen Omniverse-simulaties en ROS 2 te overbruggen.
+Het succes van deze proef wordt niet afgemeten aan een perfect werkende simulatie, maar aan de identificatie van de root-cause van de systeemfouten. Het doel is om door middel van een foutenanalyse concrete aanbevelingen te formuleren voor de robotica-community om de softwarematige kloof tussen Omniverse-simulaties en ROS 2 te overbruggen.
 
 \section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
 \label{sec:opzet-bachelorproef}
@@ -69,10 +69,14 @@ Het succes van deze proef wordt niet uitsluitend afgemeten aan een perfect werke
 
 De rest van deze bachelorproef is als volgt opgebouwd:
 
-In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand van zaken binnen het onderzoeksdomein, waarbij dieper wordt ingegaan op AMR-technologieën en de ROS 2-standaarden REP-103 en REP-105.
+In Hoofdstuk~\ref{ch:stand-van-zaken} (Stand van zaken) wordt het theoretisch kader geschetst. Hierbij ligt de focus op de huidige architectuur van autonome mobiele robots (AMR), de werking van SLAM-algoritmen en de cruciale ROS 2-standaarden REP-103 en REP-105 voor coördinatensystemen.
 
-In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht. Hierin wordt de opbouw van zowel de fysieke robot als de digitale tweeling besproken, inclusief de gebruikte diagnostische technieken voor de $TF$-tree analyse.
+In Hoofdstuk~\ref{ch:methodologie} (Methodologie) wordt de wetenschappelijke aanpak toegelicht. Hierin worden de gekozen onderzoeksmethoden voor zowel de hardware-ontwikkeling als de simulatie-integratie verantwoord.
 
-In Hoofdstuk~\ref{ch:resultaten} (Resultaten en Discussie) worden de bevindingen van de fysieke testen gepresenteerd en wordt een diepgaande analyse gegeven van het falen van de SLAM-fase in de simulator.
+In Hoofdstuk~\ref{ch:realisatie} (Realisatie van de Fysieke en Virtuele Robot) wordt de technische opbouw van het project besproken. Dit omvat de assemblage van de fysieke robot en de configuratie van de digitale tweeling in NVIDIA Isaac Sim, inclusief de Action Graph en de communicatiebridge.
 
-In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij worden ook aanbevelingen gedaan voor toekomstige integraties tussen NVIDIA Isaac Sim en ROS 2.
+In Hoofdstuk~\ref{ch:diagnostische_analyse} (Diagnostische Analyse van de Integratiefouten) wordt dieper ingegaan op de technische barrières die tijdens het proces optraden. Hier worden de fouten in de transformatieboom ($TF$-tree) ontleed en worden de experimentele correctiepogingen, zoals \textit{shadow links}, geëvalueerd.
+
+In Hoofdstuk~\ref{ch:resultaten_discussie} (Resultaten en Discussie) worden de bevindingen thematisch geanalyseerd. De focus ligt op de vergelijking tussen de fysieke en virtuele prestaties, gelinkt aan de theoretische \textit{software-to-software gap}.
+
+In Hoofdstuk~\ref{ch:conclusie} (Conclusie) wordt tenslotte een finaal antwoord geformuleerd op de centrale onderzoeksvraag. Daarnaast worden de beperkingen van het onderzoek besproken en aanbevelingen gedaan voor toekomstig onderzoek.

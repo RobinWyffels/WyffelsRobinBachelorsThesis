@@ -25,7 +25,7 @@ In deze bachelorproef is de integratie tussen NVIDIA Isaac Sim en ROS 2 onderzoc
     
     \item[DV5: Welke parameters in het URDF-exportproces dragen bij aan foutieve transformaties?] De interpretatie van de assen tijdens de export uit Onshape is kritiek. Een verkeerde configuratie van de voorwaartse as in de export-tool leidt tot verschuivingen die direct doorwerken in de instabiliteit van de TF-tree in Isaac Sim.
     
-    \item[DV6: Welke diagnostische methoden zijn effectief voor het isoleren van integratiefouten?] Het loggen van \texttt{map} $\to$ \texttt{odom} transformaties tijdens SLAM-events bleek essentieel. Ook "rotatietests" (draaien zonder translatie) hielpen om vast te stellen dat de fout specifiek in de lineaire translatie-as van de odometrie zat.
+    \item[DV6: Welke diagnostische methoden zijn effectief voor het isoleren van integratiefouten?] Het loggen van \texttt{map} $\to$ \texttt{odom} transformaties tijdens SLAM-events bleek essentieel. Ook ``rotatietest'' (draaien zonder translatie) hielpen om vast te stellen dat de fout specifiek in de lineaire translatie-as van de odometrie zat.
 \end{description}
 
 \subsection{Oplossingsdomein: Strategieën voor Systeemoptimalisatie}
@@ -40,7 +40,7 @@ In deze bachelorproef is de integratie tussen NVIDIA Isaac Sim en ROS 2 onderzoc
 \section{Eindconclusie}
 \label{sec:eindconclusie}
 
-De centrale onderzoeksvraag van deze bachelorproef luidde: \textit{"In welke mate vormen de technische discrepanties in coördinatenstelsels tussen NVIDIA Isaac Sim en ROS 2 een barrière voor de realisatie van een functionele digital twin voor autonome navigatie?"}
+De centrale onderzoeksvraag van deze bachelorproef luidde: \textit{``In welke mate vormen de technische discrepanties in coördinatenstelsels tussen NVIDIA Isaac Sim en ROS 2 een barrière voor de realisatie van een functionele digital twin voor autonome navigatie?''}
 
 Op basis van de resultaten van dit onderzoek kan worden geconcludeerd dat deze technische discrepanties een \textbf{significante barrière} vormen die de realisatie van een volledig functionele \textit{digital twin} in de huidige technologische constellatie verhindert. Hoewel de fysieke robot succesvol navigeert met behulp van de ZED SDK en de Nav2-stack, zorgt de fundamentele mismatch tussen het linkshandige USD-coördinatenstelsel van Isaac Sim en de rechtshandige REP-103 standaard van ROS 2 voor een onoverbrugbare kloof in de data-integriteit.
 

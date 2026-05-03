@@ -28,7 +28,7 @@ Om de oorzaak van dit gedrag te achterhalen, is een stapsgewijze analyse uitgevo
 \subsubsection{Geometrische Discrepanties en Frame-oriëntatie}
 Een primaire observatie was een rotatiefout van 180° in de LiDAR-data. Objecten die zich in de simulator fysiek vóór de robot bevonden, werden in Foxglove achter de robot geprojecteerd. Een initiële poging om dit te corrigeren via het attribuut \texttt{startAzimuthOffsetDeg} binnen de \texttt{RTX Lidar}-instellingen van Isaac Sim gaf geen resultaat. Dit dwong tot een handmatige fysieke rotatie van de laser-prim binnen de USD-omgeving (180° over de Z-as) om de visuele scans te synchroniseren met de robot-oriëntatie in ROS.
 
-Ondanks de correctie van de scangegevens bleef de lokalisatie instabiel door een fundamentele mismatch in het wereld-coördinatenstelsel. Er werd vastgesteld dat Isaac Sim de robot 180° gedraaid in de wereld had geplaatst ten opzichte van het ROS-referentiekader. Wanneer de robot in de simulator "vooruit" reed, bewoog deze in negatieve X-richting binnen de Isaac-wereld. De odometrie-node rapporteerde deze negatieve verplaatsing correct; echter, binnen de \textit{REP-105} standaard van ROS 2 Jazzy wordt een negatieve X-verplaatsing geïnterpreteerd als een achterwaartse beweging. Dit veroorzaakte een direct conflict tussen de visuele voorwaartse beweging in de simulator en de logische achterwaartse beweging in de navigatie-stack.
+Ondanks de correctie van de scangegevens bleef de lokalisatie instabiel door een fundamentele mismatch in het wereld-coördinatenstelsel. Er werd vastgesteld dat Isaac Sim de robot 180° gedraaid in de wereld had geplaatst ten opzichte van het ROS-referentiekader. Wanneer de robot in de simulator ``vooruit'' reed, bewoog deze in negatieve X-richting binnen de Isaac-wereld. De odometrie-node rapporteerde deze negatieve verplaatsing correct; echter, binnen de \textit{REP-105} standaard van ROS 2 Jazzy wordt een negatieve X-verplaatsing geïnterpreteerd als een achterwaartse beweging. Dit veroorzaakte een direct conflict tussen de visuele voorwaartse beweging in de simulator en de logische achterwaartse beweging in de navigatie-stack.
 
 \subsubsection{Wiskundige Correcties en Simulatie-manipulatie}
 \label{subsubsec:wiskundige_correcties}
@@ -51,7 +51,7 @@ De analyse van deze commits toont aan dat, hoewel individuele datastromen correc
 \subsection{Vastgestelde Discrepanties en Validatie van de Hypothese}
 \label{subsec:validatie_hypothese}
 
-De analyse leidde tot de conclusie dat de odometrie-data en de LiDAR-scangeometrie elkaar bleven tegenspreken binnen de SLAM-optimizer. Het "terugspringen" van de robot is de reactie van de \texttt{slam\_toolbox} op een waargenomen onmogelijkheid in de verplaatsing.
+De analyse leidde tot de conclusie dat de odometrie-data en de LiDAR-scangeometrie elkaar bleven tegenspreken binnen de SLAM-optimizer. Het ``terugspringen'' van de robot is de reactie van de \texttt{slam\_toolbox} op een waargenomen onmogelijkheid in de verplaatsing.
 
 \begin{table}[h]
 \centering
@@ -74,6 +74,6 @@ Trigger-gevoeligheid & Verhogen van \texttt{minimum\_travel\_distance} (drempelw
 \end{enumerate}
 
 \subsection{Conclusie van de Integratie-analyse}
-De "Sim-to-Real gap" in dit project werd onoverbrugbaar door de cumulatieve effecten van as-inversies en middleware-beperkingen. De noodzaak om een 180° gedraaid wereld-coördinatenstelsel in Isaac Sim handmatig te synchroniseren met ROS 2 Jazzy via UDP-scripting en wiskundige correctie-nodes leidde tot minuscule timing- of schaleringsfouten. In een SLAM-context leiden dergelijke kleine discrepanties tot het falen van de scan-matching optimizer. 
+De ``Sim-to-Real gap'' in dit project werd onoverbrugbaar door de cumulatieve effecten van as-inversies en middleware-beperkingen. De noodzaak om een 180° gedraaid wereld-coördinatenstelsel in Isaac Sim handmatig te synchroniseren met ROS 2 Jazzy via UDP-scripting en wiskundige correctie-nodes leidde tot minuscule timing- of schaleringsfouten. In een SLAM-context leiden dergelijke kleine discrepanties tot het falen van de scan-matching optimizer. 
 
 Dit resultaat beantwoordt de deelvragen met een kritische noot: hoewel Isaac Sim krachtige simulatiemogelijkheden biedt, introduceert de Windows-architectuur (zonder native \textit{CycloneDDS}-ondersteuning voor ROS 2) zodanige complexiteit in de TF-tree dat real-time navigatie-validatie voor dit specifieke robotplatform niet betrouwbaar kon worden afgerond.

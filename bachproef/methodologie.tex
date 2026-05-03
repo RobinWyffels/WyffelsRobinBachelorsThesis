@@ -5,27 +5,6 @@
 \chapter{\IfLanguageName{dutch}{Methodologie}{Methodology}}%
 \label{ch:methodologie}
 
-%% TODO: In dit hoofstuk geef je een korte toelichting over hoe je te werk bent
-%% gegaan. Verdeel je onderzoek in grote fasen, en licht in elke fase toe wat
-%% de doelstelling was, welke deliverables daar uit gekomen zijn, en welke
-%% onderzoeksmethoden je daarbij toegepast hebt. Verantwoord waarom je
-%% op deze manier te werk gegaan bent.
-%% 
-%% Voorbeelden van zulke fasen zijn: literatuurstudie, opstellen van een
-%% requirements-analyse, opstellen long-list (bij vergelijkende studie),
-%% selectie van geschikte tools (bij vergelijkende studie, "short-list"),
-%% opzetten testopstelling/PoC, uitvoeren testen en verzamelen
-%% van resultaten, analyse van resultaten, ...
-%%
-%% !!!!! LET OP !!!!!
-%%
-%% Het is uitdrukkelijk NIET de bedoeling dat je het grootste deel van de corpus
-%% van je bachelorproef in dit hoofstuk verwerkt! Dit hoofdstuk is eerder een
-%% kort overzicht van je plan van aanpak.
-%%
-%% Maak voor elke fase (behalve het literatuuronderzoek) een NIEUW HOOFDSTUK aan
-%% en geef het een gepaste titel.
-
 In dit hoofdstuk wordt de gehanteerde onderzoeksstrategie toegelicht. Gezien de technische complexiteit van de integratie tussen NVIDIA Isaac Sim en ROS 2, is gekozen voor een methodiek die de nadruk legt op systeemontwerp en een daaropvolgende diagnostische analyse van de \textit{sim-to-real gap}. Het onderzoek is onderverdeeld in vijf hoofdfasen, waarbij elke fase bijdraagt aan de beantwoording van de deelvragen binnen het probleem-, analyse- en oplossingsdomein.
 
 \section{Fase 1: Literatuurstudie en Architectuurdefinitie}
@@ -49,7 +28,7 @@ Gedurende een periode van twee maanden werd het concept uit het CAD-model omgeze
 \begin{itemize}
     \item \textbf{Activiteiten:} Hardware-productie (3D-printen, plasmasnijden), assemblage van elektronica (Raspberry Pi 5, motordrivers, krachtbron, sensoren,...) en software-integratie van de ROS 2-stack.
     \item \textbf{Onderzoeksmethode:} Prototyping en functionele validatietesten in een echte magazijnomgeving.
-    \item \textbf{Relevantie:} Deze fase dient als de "ground truth" voor \textbf{DV4}. Het succesvol mappen in de echte wereld bewijst de correctheid van de software-stack buiten de simulatie-omgeving.
+    \item \textbf{Relevantie:} Deze fase dient als de ``ground truth'' voor \textbf{DV4}. Het succesvol mappen in de echte wereld bewijst de correctheid van de software-stack buiten de simulatie-omgeving.
 \end{itemize}
 
 \section{Fase 4: Systeemintegratie en Virtuele Implementatie}
@@ -61,7 +40,7 @@ In deze fase werd de digitale tweeling geïmporteerd in Isaac Sim en werd de com
 \end{itemize}
 
 \section{Fase 5: Diagnostische Analyse en Oplossingsstrategie}
-Nadat het "rubberbanding-effect" werd vastgesteld tijdens SLAM-operaties in de simulator, verschoof de methodiek naar een diepgaand diagnostisch onderzoek.
+Nadat het ``rubberbanding''-effect werd vastgesteld tijdens SLAM-operaties in de simulator, verschoof de methodiek naar een diepgaand diagnostisch onderzoek.
 \begin{itemize}
     \item \textbf{Doelstelling:} Het isoleren van de \textit{root-cause} van de integratiefouten en het formuleren van best-practices.
     \item \textbf{Onderzoeksmethode:} \textit{Root Cause Analysis} (RCA) door middel van stapsgewijze troubleshooting, visuele inspectie van de $TF$-tree in RViz, en log-analyse van timing-jitter en coördinaten-mismatches.

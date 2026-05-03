@@ -15,7 +15,7 @@ Het geheel wordt beschermd door een externe behuizing (schelp), die tevens dient
 Voor de simulatie in NVIDIA Isaac Sim is een accuraat \textit{Unified Robot Description Format} (URDF) essentieel. Om een schone en functionele export vanuit Onshape te garanderen, is een specifieke methodiek gehanteerd waarbij de complexiteit van het CAD-model werd gereduceerd tot de essentie voor simulatie.
 
 \subsubsection{Assembly-voorbereiding en Fysische Eigenschappen}
-Er is een specifieke \textit{export-assembly} gecreëerd waarin redundante onderdelen (zoals bouten of esthetische details) werden verwijderd om "computational clutter" te voorkomen. Aan elk functioneel onderdeel in Onshape is een specifiek materiaal toegewezen. Dit is cruciaal voor de automatische berekening van de massa en de traagheidstensor (\textit{inertia}) binnen de URDF, wat essentieel is voor realistische fysica-interacties \autocite{Tan2018}.
+Er is een specifieke \textit{export-assembly} gecreëerd waarin redundante onderdelen (zoals bouten of esthetische details) werden verwijderd om ``computational clutter'' te voorkomen. Aan elk functioneel onderdeel in Onshape is een specifiek materiaal toegewezen. Dit is cruciaal voor de automatische berekening van de massa en de traagheidstensor (\textit{inertia}) binnen de URDF, wat essentieel is voor realistische fysica-interacties \autocite{Tan2018}.
 
 Onderdelen zoals de aandrijfmotoren hebben geen directe visuele functie in de simulator, maar zijn expliciet behouden om de massaverdeling van de robot accuraat weer te geven. Sensoren zijn opgenomen in het model om hun exacte ruimtelijke coördinaten ten opzichte van de \textit{base\_link} vast te leggen.
 
@@ -76,7 +76,7 @@ De realisatie van de fysieke robot vereiste een nauwe integratie tussen diverse 
 
 \subsubsection{Elektronische Architectuur en Sensoren}
 \label{sec:fysieke_constructie}
-De rekenkracht van de robot is verdeeld over twee complementaire computereenheden om te voldoen aan de specifieke eisen van de sensoren en actuatoren. Als hoofdcomputer fungeert een \textbf{Raspberry Pi 5 (16GB)}, die verantwoordelijk is voor de globale navigatiestack en de aansturing van de motoren. Vanwege het ontbreken van CUDA-cores op de Raspberry Pi, is een \textbf{NVIDIA Jetson Nano} toegevoegd als dedicated processor voor de visuele odometrie van de \textbf{Stereolabs ZED Mini} camera.
+De rekenkracht van de robot is verdeeld over twee complementaire computereenheden om te voldoen aan de specifieke eisen van de sensoren en actuatoren. Als hoofdcomputer fungeert een \textbf{Raspberry Pi 5 (16GB)}, die verantwoordelijk is voor de globale navigatiestack en de aansturing van de motoren. Vanwege het ontbreken van Compute Unified Device Architecture (CUDA)-cores op de Raspberry Pi, is een \textbf{NVIDIA Jetson Nano} toegevoegd als dedicated processor voor de visuele odometrie van de \textbf{Stereolabs ZED Mini} camera.
 
 De volledige \textit{Bill of Materials} (BOM) voor de elektronische assemblage is samengevat in de onderstaande tabel:
 
@@ -138,7 +138,7 @@ Een cruciaal aspect van de hybride opstelling is de communicatie tussen de Raspb
 Alvorens Isaac Sim wordt geïnitialiseerd, dienen de omgevingsvariabelen binnen de Windows-terminal correct te worden gedefinieerd om de \textit{ROS 2 Bridge} te koppelen aan de lokale Humble-distributie en de juiste middleware te forceren:
 
 \begin{listing}[h]
-\caption{Initialisatie van de ROS 2 omgeving in Windows PowerShell.}
+\caption{Initialisatie van de ROS 2 omgeving voor isaac sim.}
 \begin{minted}{powershell}
 $env:ROS_DISTRO = "humble"
 $env:RMW_IMPLEMENTATION = "rmw_fastrtps_cpp"
@@ -237,7 +237,7 @@ In Figuur \ref{fig:action_graph_full} is de volledige visuele structuur van de A
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{afbeeldingen/action_graph_full.png}
+    \includegraphics[scale=1.2]{afbeeldingen/action_graph_full.png}
     \caption{Volledig overzicht van de Action Graph in Isaac Sim, waarin de datastroom tussen de UDP-scripting node en de sensor-helpers zichtbaar is.}
     \label{fig:action_graph_full}
 \end{figure}
