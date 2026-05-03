@@ -21,6 +21,43 @@ In de simulatieomgeving trad echter het \textit{rubberbanding}-effect op. De ana
     \item \textbf{Temporele Drift:} De \texttt{Isaac Read Simulation Time}-node publiceerde tijdstempels die niet consistent gesynchroniseerd waren met de systeemklok van de ROS 2 Jazzy-omgeving op de Raspberry Pi. Dit bevestigt de theorie van \textcite{Peng2020} dat zelfs minieme afwijkingen in tijdstempels leiden tot instabiliteit in de $TF$-tree, waardoor de robot in de middleware herhaaldelijk naar een eerdere logische positie ``teleporteert''.
 \end{itemize}
 
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{afbeeldingen/Slam/IMG_6769.JPEG}
+        \caption{foto van gescande warenhuis.}
+        \label{fig:WarehouseImage}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{afbeeldingen/Slam/living1.png}
+        \caption{Slam map resultaat van warenhuis.}
+        \label{fig:WarehouseScan}
+    \end{subfigure}
+    \caption{Slam resultaten van fysieke robot}
+    \label{fig:IRLSlamResults}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{afbeeldingen/Slam/Screenshot 2026-04-21 182108.png}
+        \caption{foto van virtueel warenhuis.}
+        \label{fig:simWarehouseImage}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{afbeeldingen/Slam/Screenshot 2026-04-22 210616.png}
+        \caption{Slam map resultaat van virtueel warenhuis.}
+        \label{fig:simWarehouseScan}
+    \end{subfigure}
+    \caption{Slam resultaten van virtuele robot}
+    \label{fig:SimSlamResults}
+\end{figure}
+
 \subsection{Analyse van de Middleware-beperkingen}
 Een kritieke factor in het falen van de simulatie-integratie was de verplichte overstap naar \texttt{FastDDS} voor de Windows-host van Isaac Sim. Waar de fysieke robot profiteerde van de stabiliteit van \texttt{CycloneDDS}, introduceerde de noodzakelijke configuratie voor Windows een extra laag van complexiteit en latency. De data-analyse toont aan dat pakketverlies en jitter in de odometrie-topics toenamen wanneer de simulatie-complexiteit steeg, wat de \textit{Quality of Service} (QoS) instellingen onder druk zette \autocite{Robotics2026}.
 

@@ -30,6 +30,33 @@ Een primaire observatie was een rotatiefout van 180° in de LiDAR-data. Objecten
 
 Ondanks de correctie van de scangegevens bleef de lokalisatie instabiel door een fundamentele mismatch in het wereld-coördinatenstelsel. Er werd vastgesteld dat Isaac Sim de robot 180° gedraaid in de wereld had geplaatst ten opzichte van het ROS-referentiekader. Wanneer de robot in de simulator ``vooruit'' reed, bewoog deze in negatieve X-richting binnen de Isaac-wereld. De odometrie-node rapporteerde deze negatieve verplaatsing correct; echter, binnen de \textit{REP-105} standaard van ROS 2 Jazzy wordt een negatieve X-verplaatsing geïnterpreteerd als een achterwaartse beweging. Dit veroorzaakte een direct conflict tussen de visuele voorwaartse beweging in de simulator en de logische achterwaartse beweging in de navigatie-stack.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{afbeeldingen/LaserFlipped/inSimReferance.png}
+    \caption{Referentie foto voor setup in isaac sim voor laser mis oriëntatie}
+    \label{fig:laserErrorSimReference}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{afbeeldingen/LaserFlipped/RawlaserbeforeFlip.png}
+        \caption{Raw laserscan data voor 180 graden flip van lidar in isaac sim.}
+        \label{fig:RawlaserbeforeFlip}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{afbeeldingen/LaserFlipped/RawLaserAfterFlip.png}
+        \caption{Raw laserscan data na 180 graden flip van lidar in isaac sim.Detailweergave}
+        \label{fig:RawLaserAfterFlip}
+    \end{subfigure}
+    \caption{Raw laserscan data voor en na de fysieke rotatie van de LiDAR-prim in Isaac Sim.}
+    \label{fig:flippedLaserDataError}
+\end{figure}
+
+
 \subsubsection{Wiskundige Correcties en Simulatie-manipulatie}
 \label{subsubsec:wiskundige_correcties}
 
