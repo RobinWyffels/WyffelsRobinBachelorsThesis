@@ -109,6 +109,25 @@ Voor de voeding is gekozen voor twee \textbf{Einhell 18V/5.2Ah Power X-Change} b
 \item \textbf{Circuit 2 (Aandrijving):} Een AZDelivery Step-Down converter verlaagt de spanning naar 10V voor de motorcontrollers. Hoewel de motoren een nominale spanning van 12V hebben, is gekozen voor \textit{undervolting} om de thermische belasting te beperken.
 \end{itemize}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.48\textwidth]{afbeeldingen/Sora-2.jpg}
+    \hfill
+    \includegraphics[width=0.48\textwidth]{afbeeldingen/Sora-8.jpg}
+    \caption{Fysieke realisatie van de robot, zonder behuizing. De interne componenten en bedrading zijn zichtbaar.}
+    \label{fig:robot_without_shell}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.48\textwidth]{afbeeldingen/Sora-9.jpg}
+    \hfill
+    \includegraphics[width=0.48\textwidth]{afbeeldingen/Sora-14.jpg}
+    \caption{Fysieke realisatie van de robot met behuizing.}
+    \label{fig:robot_with_shell}
+\end{figure}
+
+
 \subsubsection{Software-integratie en Gedistribueerd ROS 2 Netwerk}
 De integratie tussen de Raspberry Pi en de Jetson Nano vormde een significante uitdaging vanwege incompatibiliteit in besturingssystemen. Voor een stabiele werking binnen het ROS-domein is een peer-to-peer ethernetverbinding opgezet waarbij \texttt{chronyc} zorgt voor de klok-synchronisatie tussen beide borden.
 
@@ -237,7 +256,7 @@ In Figuur \ref{fig:action_graph_full} is de volledige visuele structuur van de A
 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=1.2]{afbeeldingen/action_graph_full.png}
+    \includegraphics[width=\textwidth]{afbeeldingen/action_graph_full.png}
     \caption{Volledig overzicht van de Action Graph in Isaac Sim, waarin de datastroom tussen de UDP-scripting node en de sensor-helpers zichtbaar is.}
     \label{fig:action_graph_full}
 \end{figure}
